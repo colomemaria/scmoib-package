@@ -1,0 +1,35 @@
+.DS_Store
+docs/_build
+.pytest_cache/
+README.html
+.icloud
+*.icloud
+
+# always-ignore extensions
+*~
+
+# Python / Byte-compiled / optimized / DLL
+__pycache__/
+episcanpy/__pycache__/
+*.py[cod]
+*.so
+.cache
+
+# OS or Editor files and folders
+.DS_Store
+Thumbs.db
+.ipynb_checkpoints/
+.directory
+/.idea/
+
+# always-ignore directories
+/dist/
+/build/
+/_build/
+/_static/
+/_templates/
+/__pycache__/
+.Rproj.user
+epiScanpy.Rproj
+.Rhistory
+
