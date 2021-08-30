@@ -41,7 +41,7 @@ class MetricsCalculator:
                 cell_type_dist[key] = cell_type_dist.get(key, []) + [len(i) - 2]
 
             for i in cell_type_dist.keys():
-                cell_type_dist[i] = np.mean(cell_dist[i])
+                cell_type_dist[i] = np.mean(cell_type_dist[i])
             adata.uns['mean_nodes_per_cell_type'] = cell_type_dist
         
     def silhouette(self, adata, adata_id, batch_key='orig.ident', cell_label='paper.cell.type', embed='X_pca'):
