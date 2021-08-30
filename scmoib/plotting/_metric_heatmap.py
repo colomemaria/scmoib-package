@@ -1,7 +1,7 @@
 from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
 import seaborn as sns
-omport matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 
 def metric_heatmap(dataframe, cmap='viridis', scale=False, display_values=True, show=True, save=None):
