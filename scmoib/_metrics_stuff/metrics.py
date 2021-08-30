@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 #import networkx as nx
 #from scIB.utils import *
-from ..utils import *
+from ..utils.utils import *
 #from scIB.preprocessing import score_cell_cycle
 #from scIB.clustering import opt_louvain
 from scipy import sparse
