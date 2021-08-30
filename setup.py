@@ -21,7 +21,6 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    package_dir={"": "scmoib"},
-    packages=setuptools.find_packages(where="scmoib"),
+    packages=setuptools.find_packages(),
     python_requires=">=3.6",
 )
