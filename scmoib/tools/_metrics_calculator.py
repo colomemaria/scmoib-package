@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import sklearn
 from ..utils.utils import *
 from .._metrics_stuff import metrics_paired_data as mpd
 from .._metrics_stuff import metrics as me
