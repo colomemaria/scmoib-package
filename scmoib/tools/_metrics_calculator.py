@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import sklearn
+import episcanpy as epi
 from ..utils.utils import *
 from .._metrics_stuff import metrics_paired_data as mpd
 from .._metrics_stuff import metrics as me
@@ -65,50 +66,17 @@ class MetricsCalculator:
     def nmi(self, adata, adata_id, group1, group2, method="arithmetic", nmi_dir=None):
         self.__check_key(adata_id)
         self.metrics[adata_id]['NMI'] = me.nmi(adata, group1, group2, method=method, nmi_dir=nmi_dir)
-        
-    def accuracy_paired_omics(self, adata, adata_id, omic_layer, variable, cell_name=None, percent=False):
-        self.__check_key(adata_id)
-        self.metrics[adata_id] = mpd.accuracy_paired_omics(adata, 
-                                                           omic_layer, 
-                                                           variable, 
-                                                           cell_name=cell_name, 
-                                                           percent=percent)
-    
-    def accuracy_paired_omics_per_cell_type(self, adata, adata_id, omic_layer, variable, 
-                                            cell_type, cell_name=None, percent=False):
-        
-        adata.uns['acc_cell_type'] = mpd.accuracy_paired_omics_per_cell_type(adata, 
-                                                                             omic_layer, 
-                                                                             variable, 
-                                                                             cell_type, 
-                                                                             cell_name=cell_name, 
-                                                                             percent=percent)
 
     def get_df(self):
         return pd.DataFrame(self.metrics).transpose()
     
-    def _ami(self, adata, adata_id, group1, group2, average_method='arithmetic'):
+    def ami(self, adata, adata_id, group1, group2):
         self.__check_key(adata_id)
-        checkAdata(adata)
+        self.metrics[adata_id]['AMI'] = epi.tl.AMI(adata, group1, group2)
         
-        if isinstance(group1, str):
-            checkBatch(group1, adata.obs)
-            group1 = adata.obs[group1].tolist()
-        elif isinstance(group1, pd.Series):
-            group1 = group1.tolist()
-
-        if isinstance(group2, str):
-            checkBatch(group2, adata.obs)
-            group2 = adata.obs[group2].tolist()
-        elif isinstance(group2, pd.Series):
-            group2 = group2.tolist()
-        
-        if len(group1) != len(group2):
-            raise ValueError(f'different lengths in group1 ({len(group1)}) and group2 ({len(group2)})')
-    
-        self.metrics[adata_id]['AMI'] = sklearn.metrics.cluster.adjusted_mutual_info_score(group1, 
-                                                                                           group2,
-                                                                                           average_method=average_method)
+    def homogeneity(self, adata, adata_id, group1, group2):
+        self.__check_key(adata_id)
+        self.metrics[adata_id]['homogeneity'] = epi.tl.homogeneity(adata, group1, group2)
     
     def _average_dist_between_matching_barcodes(self, adata, adata_id, cell_names=None, cell_type=None, absolute=True):
         result = mpd.average_distance_between_matching_barcodes(adata, 
@@ -120,3 +88,21 @@ class MetricsCalculator:
             self.metrics[adata_id]['pairwise_distance'] = result
         elif isinstance(result, dict):
             adata.uns['average_dist_per_cluster'] = result
+
+    def _accuracy_paired_omics(self, adata, adata_id, omic_layer, variable, cell_name=None, percent=False):
+        self.__check_key(adata_id)
+        self.metrics[adata_id] = mpd.accuracy_paired_omics(adata, 
+                                                           omic_layer, 
+                                                           variable, 
+                                                           cell_name=cell_name, 
+                                                           percent=percent)
+    
+    def _accuracy_paired_omics_per_cell_type(self, adata, adata_id, omic_layer, variable, 
+                                            cell_type, cell_name=None, percent=False):
+        
+        adata.uns['acc_cell_type'] = mpd.accuracy_paired_omics_per_cell_type(adata, 
+                                                                             omic_layer, 
+                                                                             variable, 
+                                                                             cell_type, 
+                                                                             cell_name=cell_name, 
+                                                                             percent=percent)

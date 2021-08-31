@@ -65,9 +65,10 @@ def accuracy_paired_omics(adata, omic_layer, variable, cell_name=None, percent=F
     df = adata.obs[[omic_layer, variable]]
     if cell_name != None:
         df.index = adata.obs[cell_name]
+    
     else:
         df.index = adata.index
-        
+
     
     # split RNA and ATAC cells in 2 dataframes
     omic_layer_variable = list(set(df[omic_layer]))
