@@ -4,7 +4,7 @@ import pandas as pd
 
 
 def mean_node_per_cell_type(adata, title=None):
-    cell_dist = adata.uns['mean_nodes_per_cell_type']
+    cell_dist = adata.uns['node_metrics']['mean_nodes_per_cell_type']
     fig, ax = plt.subplots(figsize=(10, 5))
     sns.barplot(x=0, y=1, data=pd.DataFrame(cell_dist.items()))
     ax.set(xlabel='Cell type', ylabel='Mean number of nodes between matching barcodes', title=title)
