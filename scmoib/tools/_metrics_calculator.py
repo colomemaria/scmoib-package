@@ -2,57 +2,74 @@ import numpy as np
 import pandas as pd
 import sklearn
 import episcanpy as epi
-from ..utils.utils import *
-from .._metrics_stuff import metrics_paired_data as mpd
-from .._metrics_stuff import metrics as me
-from .._metrics_stuff import dijkstra
+from . import metrics
 
 
 class MetricsCalculator:
+    """
+    The MetricsCalculator object calculates and stores different metrics for
+    data integration benchmarking.
+    """
     def __init__(self):
         self.metrics = {}
         
     def __check_key(self, key):
         if key not in self.metrics.keys():
             self.metrics[key] = {}
+            
+    def get_df(self):
+        """
+        Return metrics information as DataFrame.
+        """
+        return pd.DataFrame(self.metrics).transpose()
         
-    def node_metric(self, adata, adata_id, bc_list1, bc_list2, cell_type=None, n_jobs=1):
+    def node_metrics(self, adata, adata_id, bc_list1, bc_list2, cell_type, n_jobs=None):
+        """
+        Calculate node metrics using shortest paths between matching barcodes.
+        
+        Parameters
+        ----------
+        adata: AnnData object
+            AnnData object
+        
+        adata_id: str
+            Data ID for metrics dataframe.
+            
+        bc_list1: list
+            
+        bc_list2: list
+        
+        cell_type: str
+            obs variable containing the ground truth cell type
+        
+        n_jobs: None or int, optional
+            Number of threads for calculating shortest paths
+        """
         self.__check_key(adata_id) 
-        results = dijkstra.run_dijkstra(adata, bc_list1, bc_list2, n_jobs)
-        tmp_res = list(zip(*results))
-        dists = np.array(tmp_res[0])
-        num_inf = np.where(dists == float('inf'))[0].shape[0]
-        paths = list(np.array(tmp_res[1], dtype=object)[np.where(dists != float('inf'))])
-        if num_inf == dists.shape[0]:
-            nodes_count = []
-            mean_nodes = float('inf')
-        else:
-            nodes_count = list(map(lambda x: len(x) - 2, paths))
-            mean_nodes = np.array(nodes_count).mean()
-        self.metrics[adata_id]['num_inf'] = num_inf
-        self.metrics[adata_id]['mean_nodes'] = mean_nodes
-        self.metrics[adata_id]['cd_ratio'] = 2 * num_inf / adata.shape[0] 
-        adata.uns['num_inf'] = num_inf
-        adata.uns['mean_nodes'] = mean_nodes
-        adata.uns['dists'] = dists
-        adata.uns['nodes_count'] = nodes_count
         
-        if cell_type:
-            cell_type_dist = {}
-            for i in paths:
-                key = adata.obs.loc[i[0], cell_type]
-                cell_type_dist[key] = cell_type_dist.get(key, []) + [len(i) - 2]
-
-            for i in cell_type_dist.keys():
-                cell_type_dist[i] = np.mean(cell_type_dist[i])
-            adata.uns['mean_nodes_per_cell_type'] = cell_type_dist
+        res = metrics.node_metrics(adata, bc_list1, bc_list2, cell_type, n_jobs=n_jobs)
+        self.metrics[adata_id]['num_inf'] = res[0]
+        self.metrics[adata_id]['mean_nodes'] = res[1]
         
     def silhouette(self, adata, adata_id, batch_key='orig.ident', cell_label='paper.cell.type', embed='X_pca'):
+        """
+        Calculate silhouette metrics.
+        
+        Parameters
+        ----------
+        adata: AnnData object
+            AnnData object
+        
+        adata_id: str
+            Data ID for metrics dataframe.
+        
+        ...    
+        """
         self.__check_key(adata_id)
-        sc1, sc2, sc3, sc4 = mpd.run_silhouette_metrics(adata, 
-                                                        batch_key=batch_key, 
-                                                        cell_label=cell_label, 
-                                                        embed=embed)
+        sc1, sc2, sc3, sc4 = metrics.silhouette(adata, 
+                                                batch_key=batch_key, 
+                                                cell_label=cell_label, 
+                                                embed=embed)
         
         self.metrics[adata_id]['sil_global'] = sc1
         self.metrics[adata_id]['sil_clus'] = sc2
@@ -60,26 +77,86 @@ class MetricsCalculator:
         self.metrics[adata_id]['il_score_sil'] = sc4
     
     def ari(self, adata, adata_id, group1, group2):
+        """
+        Calculate Adjusted Rand Index (ARI)
+        
+        Parameters
+        ----------
+        adata: AnnData object
+            AnnData object
+        
+        adata_id: str
+            Data ID for metrics dataframe.
+        
+        group1: str
+            ground-truth cluster assignments (e.g. cell type labels)
+        group2: str
+            "predicted" cluster assignments
+        """
         self.__check_key(adata_id)
-        self.metrics[adata_id]['ARI'] = me.ari(adata, group1, group2)
+        self.metrics[adata_id]['ARI'] = metrics.ari(adata, group1, group2)
         
     def nmi(self, adata, adata_id, group1, group2, method="arithmetic", nmi_dir=None):
+        """
+        Calculate Normalized Mutual Info score (NMI)
+        
+        Parameters
+        ----------
+        adata: AnnData object
+            AnnData object
+        
+        adata_id: str
+            Data ID for metrics dataframe.
+        
+        group1: str
+            ground-truth cluster assignments (e.g. cell type labels)
+        group2: str
+            "predicted" cluster assignments
+        """
         self.__check_key(adata_id)
-        self.metrics[adata_id]['NMI'] = me.nmi(adata, group1, group2, method=method, nmi_dir=nmi_dir)
-
-    def get_df(self):
-        return pd.DataFrame(self.metrics).transpose()
+        self.metrics[adata_id]['NMI'] = metrics.nmi(adata, group1, group2, method=method, nmi_dir=nmi_dir)
     
     def ami(self, adata, adata_id, group1, group2):
+        """
+        Calculate Adjusted Mutual Info score (NMI)
+        
+        Parameters
+        ----------
+        adata: AnnData object
+            AnnData object
+        
+        adata_id: str
+            Data ID for metrics dataframe.
+        
+        group1: str
+            ground-truth cluster assignments (e.g. cell type labels)
+        group2: str
+            "predicted" cluster assignments
+        """
         self.__check_key(adata_id)
-        self.metrics[adata_id]['AMI'] = epi.tl.AMI(adata, group1, group2)
+        self.metrics[adata_id]['AMI'] = metrics.ami(adata, group1, group2)
         
     def homogeneity(self, adata, adata_id, group1, group2):
+        """
+        Calculate Homogeneity score (NMI)
+        
+        Parameters
+        ----------
+        adata: AnnData object
+            AnnData object
+        
+        adata_id: str
+            Data ID for metrics dataframe.
+        
+        group1: str
+        
+        group2: str
+        """
         self.__check_key(adata_id)
-        self.metrics[adata_id]['homogeneity'] = epi.tl.homogeneity(adata, group1, group2)
+        self.metrics[adata_id]['homogeneity'] = metrics.homogeneity(adata, group1, group2)
     
     def _average_dist_between_matching_barcodes(self, adata, adata_id, cell_names=None, cell_type=None, absolute=True):
-        result = mpd.average_distance_between_matching_barcodes(adata, 
+        result = metrics.average_distance_between_matching_barcodes(adata, 
                                                                 cell_names=cell_names, 
                                                                 cell_type=cell_type, 
                                                                 absolute=absolute)
@@ -90,19 +167,56 @@ class MetricsCalculator:
             adata.uns['average_dist_per_cluster'] = result
 
     def _accuracy_paired_omics(self, adata, adata_id, omic_layer, variable, cell_name=None, percent=False):
+        """
+        will match cell barcode from paired measurement for 2 layers. 
+        I will return the ratio of cells for which the RNA and ATAC barcode end up in the same cluster.
+
+        Parameters
+        ----------
+        adata : coembed multiomic object
+        variable : cell clustering obs variable
+        cell_name : obs variable containing the matching barcodes for the 2 omic layers
+        omic_layer : obs variable containing the batch/omic layer of origin
+        percent=True  return percentage. if false, return ratio
+
+        Returns
+        -------
+        accuracy: float ratio of cells for which the barcodes end up in the same barcodes
+
+        """
+
         self.__check_key(adata_id)
-        self.metrics[adata_id] = mpd.accuracy_paired_omics(adata, 
+        self.metrics[adata_id] = metrics.accuracy_paired_omics(adata, 
                                                            omic_layer, 
                                                            variable, 
                                                            cell_name=cell_name, 
                                                            percent=percent)
     
     def _accuracy_paired_omics_per_cell_type(self, adata, adata_id, omic_layer, variable, 
-                                            cell_type, cell_name=None, percent=False):
+                                             cell_type, cell_name=None, percent=False):
         
-        adata.uns['acc_cell_type'] = mpd.accuracy_paired_omics_per_cell_type(adata, 
-                                                                             omic_layer, 
-                                                                             variable, 
-                                                                             cell_type, 
-                                                                             cell_name=cell_name, 
-                                                                             percent=percent)
+        """
+        will match cell barcode from paired measurement for 2 layers. 
+        I will return the dict of ratio of cells for which the RNA and ATAC barcode end up in the same cluster.
+        But the ratios are per cell types
+
+        Parameters
+        ----------
+        adata : coembed multiomic object
+        variable : cell clustering obs variable
+        cell_name : obs variable containing the matching barcodes for the 2 omic layers
+        omic_layer : obs variable containing the batch/omic layer of origin
+        cell_type : obs variable containing the ground truth cell type
+        percent=True  return percentage. if false, return ratio
+
+        Returns
+        -------
+        accuracy: dict of float ratio of cells for which the barcodes end up in the same barcodes per cell type
+
+        """
+        adata.uns['acc_cell_type'] = metrics.accuracy_paired_omics_per_cell_type(adata, 
+                                                                                 omic_layer, 
+                                                                                 variable, 
+                                                                                 cell_type, 
+                                                                                 cell_name=cell_name, 
+                                                                                 percent=percent)

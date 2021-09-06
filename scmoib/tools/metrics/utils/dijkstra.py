@@ -5,7 +5,7 @@ import numpy as np
 
 
 def __dijkstra(edges, f, t):
-    '''Finds the shortest path by using binary heap version of Dijkstra algorith
+    '''Finds the shortest path between two nodes by using binary heap version of Dijkstra algorithm.
     
     Parameters
     ----------
@@ -85,7 +85,23 @@ def __calculate_paths(edges, list1, list2, queue):
     queue.put(res)
 
 
-def run_dijkstra(adata, bc_list1, bc_list2, n_jobs=1):
+def run_dijkstra(adata, bc_list1, bc_list2, n_jobs=None):
+    """
+    Calculate shortest paths for all pairs of nodes.
+    
+    Parameters
+    ----------
+    adata: AnnData object
+    
+    bc_list1: list
+    
+    bc_list2: list
+    
+    n_jobs: None or int, optional
+        Number of threads for calculating shortest paths 
+    """
+    if not n_jobs or n_jobs <= 0:
+        n_jobs = 1
     edges = __adj_matr_to_edges(adata)
     processes = []
     q = Queue()

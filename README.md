@@ -17,6 +17,9 @@ metrics
 - add annotations to each functions. 
 - clean the metrics_stuff (maybe put it in tools as util or a subdirectory) it's up to atai
 
+From Atai
+- do we need onmi and nmi_Lanc?
+- check every script for deprecated "neighbors" problem
 
 package
 -------

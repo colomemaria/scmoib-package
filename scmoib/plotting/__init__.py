@@ -5,4 +5,4 @@ from ._cumulative_node_group import cumulative_node_group
 from ._mean_node_per_cell_type import mean_node_per_cell_type
 from ._metric_heatmap import metric_heatmap
 from ._node_distr import node_distr
-from ._umap import umap
+from ._umap import umap_barcodes

@@ -4,10 +4,10 @@ import seaborn as sns
 
 
 def node_distr(adata, title=None):
-	"""
-	Historgram plotting the number of nodes between matching barcodes. 
-	
-	"""
+    """
+    Historgram plotting the number of nodes between matching barcodes. 
+    
+    """
 
     v1, v2 = np.unique(adata.uns['nodes_count'], return_counts=True)
     fig, ax = plt.subplots(figsize=(10, 5))
