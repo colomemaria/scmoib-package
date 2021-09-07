@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-def cumulative_node(adata, title=None):
-    fig, ax = plt.subplots(figsize=(5, 5))
+def cumulative_node(adata, title=None, figsize=(10, 10)):
+    fig, ax = plt.subplots(figsize=figsize)
     sns.ecdfplot(adata.uns['node_metrics']['nodes_count'])
     sns.kdeplot(adata.uns['node_metrics']['nodes_count'], cumulative=True, color='r', linestyle="dashed")
     ax.set(xlabel='Number of nodes between matching barcodes',

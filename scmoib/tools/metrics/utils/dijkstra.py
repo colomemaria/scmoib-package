@@ -98,7 +98,7 @@ def run_dijkstra(adata, bc_list1, bc_list2, n_jobs=None):
     bc_list2: list
     
     n_jobs: None or int, optional
-        Number of threads for calculating shortest paths 
+        The number of jobs to use for the computation. None means 1 
     """
     if not n_jobs or n_jobs <= 0:
         n_jobs = 1

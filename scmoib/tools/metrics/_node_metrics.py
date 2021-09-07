@@ -22,14 +22,23 @@ def node_metrics(adata, bc_list1, bc_list2, cell_type, n_jobs=None):
         obs variable containing the ground truth cell type
         
     n_jobs: None or int, optional
-        Number of threads for calculating shortest paths
-
+        The number of jobs to use for the computation. None means 1
+    
+    Returns
+    -------
+    num_inf: int
+    
+    mean_nodes: float
+    
+    disc_ratio: float
     """
     results = dijkstra.run_dijkstra(adata, bc_list1, bc_list2, n_jobs=n_jobs)
     tmp_res = list(zip(*results))
     dists = np.array(tmp_res[0])
-    num_inf = np.where(dists == float('inf'))[0].shape[0]
+    num_inf = 2 * np.where(dists == float('inf'))[0].shape[0]
+    disc_ratio = num_inf / len(adata.obs.index)
     paths = list(np.array(tmp_res[1], dtype=object)[np.where(dists != float('inf'))])
+    
     if num_inf == dists.shape[0]:
         nodes_count = []
         mean_nodes = float('inf')
@@ -45,12 +54,13 @@ def node_metrics(adata, bc_list1, bc_list2, cell_type, n_jobs=None):
     for i in cell_type_dist.keys():
         cell_type_dist[i] = np.mean(cell_type_dist[i])
     
-    node_info = {}
-    node_info['num_inf'] = num_inf
-    node_info['mean_nodes'] = mean_nodes
-    node_info['dists'] = dists
-    node_info['nodes_count'] = nodes_count
-    node_info['mean_nodes_per_cell_type'] = cell_type_dist
-    adata.uns['node_metrics'] = node_info
+    node_metrics = {}
+    node_metrics['num_inf'] = num_inf
+    node_metrics['mean_nodes'] = mean_nodes
+    node_metrics['dists'] = dists
+    node_metrics['nodes_count'] = nodes_count
+    node_metrics['mean_nodes_per_cell_type'] = cell_type_dist
+    node_metrics['disc_ratio'] = disc_ratio
+    adata.uns['node_metrics'] = node_metrics
     
-    return num_inf, mean_nodes
+    return num_inf, mean_nodes, disc_ratio

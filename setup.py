@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="scmoib",
-    version="0.0.1",
+    version="0.2.1",
     author="Atai Dobrynin",
     author_email="atay.dobrynin@gmail.com",
     description="SCMOIB package",

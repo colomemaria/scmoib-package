@@ -50,6 +50,7 @@ class MetricsCalculator:
         res = metrics.node_metrics(adata, bc_list1, bc_list2, cell_type, n_jobs=n_jobs)
         self.metrics[adata_id]['num_inf'] = res[0]
         self.metrics[adata_id]['mean_nodes'] = res[1]
+        self.metrics[adata_id]['disc_ratio'] = res[2]
         
     def silhouette(self, adata, adata_id, batch_key='orig.ident', cell_label='paper.cell.type', embed='X_pca'):
         """
@@ -220,3 +221,5 @@ class MetricsCalculator:
                                                                                  cell_type, 
                                                                                  cell_name=cell_name, 
                                                                                  percent=percent)
+    def _graph_connectivity(self, adata, adata_id):
+        pass
