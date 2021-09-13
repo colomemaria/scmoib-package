@@ -13,4 +13,4 @@ def node_distr(adata, title=None, figsize=(10, 5)):
     fig, ax = plt.subplots(figsize=figsize)
     sns.barplot(x=v1, y=v2, ax=ax)
     ax.set(xlabel='Number of nodes between barcodes', ylabel='Number of cell pairs', title=title)
-    ax.set_xticklabels(v1, rotation=-90);
+    ax.set_xticklabels(v1, rotation=-90)

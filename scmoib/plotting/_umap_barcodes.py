@@ -4,6 +4,7 @@ from scanpy.plotting._tools.scatterplots import _get_data_points, _get_color_sou
 from scanpy.plotting._tools.scatterplots import _color_vector, settings, _get_vmin_vmax, _basis2name
 import scanpy.plotting._utils
 import scanpy._utils
+import logging
 from scanpy._utils import NeighborsView
 from scanpy.plotting._utils import _get_basis
 from scanpy.plotting._tools.scatterplots import _add_categorical_legend
@@ -11,7 +12,6 @@ import warnings
 import itertools
 from packaging.version import parse
 import networkx as nx
-
 
 import collections.abc as cabc
 from copy import copy
@@ -24,13 +24,13 @@ from cycler import Cycler
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from pandas.api.types import is_categorical_dtype
+import matplotlib
 from matplotlib import pyplot as pl, colors
 from matplotlib.cm import get_cmap
 from matplotlib import rcParams
 from matplotlib import patheffects
 from matplotlib.colors import Colormap
 from functools import partial
-
 
 try:
     from typing import Literal
@@ -45,9 +45,9 @@ except ImportError:
                     values = (values,)
                 return type('Literal_', (Literal,), dict(__args__=values))
 
+
         class Literal(metaclass=LiteralMeta):
             pass
-
 
 ColorLike = Union[str, Tuple[float, ...]]
 _IGraphLayout = Literal['fa', 'fr', 'rt', 'rt_circular', 'drl', 'eq_tree', ...]
@@ -55,7 +55,6 @@ _FontWeight = Literal['light', 'normal', 'medium', 'semibold', 'bold', 'heavy', 
 _FontSize = Literal[
     'xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large'
 ]
-
 
 VMinMax = Union[str, float, Callable[[Sequence[float]], float]]
 
@@ -71,12 +70,12 @@ def __check_projection(projection):
     if projection not in {"2d", "3d"}:
         raise ValueError(f"Projection must be '2d' or '3d', was '{projection}'.")
     if projection == "3d":
-        mpl_version = parse(mpl.__version__)
+        mpl_version = parse(matplotlib.__version__)
         if mpl_version < parse("3.3.3"):
             raise ImportError(
-                f"3d plotting requires matplotlib > 3.3.3. Found {mpl.__version__}"
+                f"3d plotting requires matplotlib > 3.3.3. Found {matplotlib.__version__}"
             )
-            
+
 
 def __plot_edges(axs, adata, basis, edges_width, edges_color, edge_list=None, neighbors_key=None):
     if not isinstance(axs, cabc.Sequence):
@@ -106,50 +105,50 @@ def __plot_edges(axs, adata, basis, edges_width, edges_color, edge_list=None, ne
 
 
 def __embedding(
-    adata: AnnData,
-    basis: str,
-    *,
-    color: Union[str, Sequence[str], None] = None,
-    gene_symbols: Optional[str] = None,
-    use_raw: Optional[bool] = None,
-    sort_order: bool = True,
-    edges: bool = False,
-    edges_width: float = 0.1,
-    edges_color: Union[str, Sequence[float], Sequence[str]] = 'grey',
-    edge_list=None,
-    neighbors_key: Optional[str] = None,
-    arrows: bool = False,
-    arrows_kwds: Optional[Mapping[str, Any]] = None,
-    groups: Optional[str] = None,
-    components: Union[str, Sequence[str]] = None,
-    layer: Optional[str] = None,
-    projection: Literal['2d', '3d'] = '2d',
-    scale_factor: Optional[float] = None,
-    color_map: Union[Colormap, str, None] = None,
-    cmap: Union[Colormap, str, None] = None,
-    palette: Union[str, Sequence[str], Cycler, None] = None,
-    na_color: ColorLike = "lightgray",
-    na_in_legend: bool = True,
-    size: Union[float, Sequence[float], None] = None,
-    frameon: Optional[bool] = None,
-    legend_fontsize: Union[int, float, _FontSize, None] = None,
-    legend_fontweight: Union[int, _FontWeight] = 'bold',
-    legend_loc: str = 'right margin',
-    legend_fontoutline: Optional[int] = None,
-    vmax: Union[VMinMax, Sequence[VMinMax], None] = None,
-    vmin: Union[VMinMax, Sequence[VMinMax], None] = None,
-    add_outline: Optional[bool] = False,
-    outline_width: Tuple[float, float] = (0.3, 0.05),
-    outline_color: Tuple[str, str] = ('black', 'white'),
-    ncols: int = 4,
-    hspace: float = 0.25,
-    wspace: Optional[float] = None,
-    title: Union[str, Sequence[str], None] = None,
-    show: Optional[bool] = None,
-    save: Union[bool, str, None] = None,
-    ax: Optional[Axes] = None,
-    return_fig: Optional[bool] = None,
-    **kwargs,
+        adata: AnnData,
+        basis: str,
+        *,
+        color: Union[str, Sequence[str], None] = None,
+        gene_symbols: Optional[str] = None,
+        use_raw: Optional[bool] = None,
+        sort_order: bool = True,
+        edges: bool = False,
+        edges_width: float = 0.1,
+        edges_color: Union[str, Sequence[float], Sequence[str]] = 'grey',
+        edge_list=None,
+        neighbors_key: Optional[str] = None,
+        arrows: bool = False,
+        arrows_kwds: Optional[Mapping[str, Any]] = None,
+        groups: Optional[str] = None,
+        components: Union[str, Sequence[str]] = None,
+        layer: Optional[str] = None,
+        projection: Literal['2d', '3d'] = '2d',
+        scale_factor: Optional[float] = None,
+        color_map: Union[Colormap, str, None] = None,
+        cmap: Union[Colormap, str, None] = None,
+        palette: Union[str, Sequence[str], Cycler, None] = None,
+        na_color: ColorLike = "lightgray",
+        na_in_legend: bool = True,
+        size: Union[float, Sequence[float], None] = None,
+        frameon: Optional[bool] = None,
+        legend_fontsize: Union[int, float, _FontSize, None] = None,
+        legend_fontweight: Union[int, _FontWeight] = 'bold',
+        legend_loc: str = 'right margin',
+        legend_fontoutline: Optional[int] = None,
+        vmax: Union[VMinMax, Sequence[VMinMax], None] = None,
+        vmin: Union[VMinMax, Sequence[VMinMax], None] = None,
+        add_outline: Optional[bool] = False,
+        outline_width: Tuple[float, float] = (0.3, 0.05),
+        outline_color: Tuple[str, str] = ('black', 'white'),
+        ncols: int = 4,
+        hspace: float = 0.25,
+        wspace: Optional[float] = None,
+        title: Union[str, Sequence[str], None] = None,
+        show: Optional[bool] = None,
+        save: Union[bool, str, None] = None,
+        ax: Optional[Axes] = None,
+        return_fig: Optional[bool] = None,
+        **kwargs,
 ) -> Union[Figure, Axes, None]:
     """\
     Scatter plot for user specified embedding basis (e.g. umap, pca, etc)
@@ -234,9 +233,9 @@ def __embedding(
     # Eg. ['Gene1', 'louvain', 'Gene2'].
     # component_list is a list of components [[0,1], [1,2]]
     if (
-        not isinstance(color, str)
-        and isinstance(color, cabc.Sequence)
-        and len(color) > 1
+            not isinstance(color, str)
+            and isinstance(color, cabc.Sequence)
+            and len(color) > 1
     ) or len(components_list) > 1:
         if ax is not None:
             raise ValueError(
@@ -272,9 +271,9 @@ def __embedding(
         import pandas.core.series
 
         if (
-            size is not None
-            and isinstance(size, (cabc.Sequence, pandas.core.series.Series, np.ndarray))
-            and len(size) == adata.shape[0]
+                size is not None
+                and isinstance(size, (cabc.Sequence, pandas.core.series.Series, np.ndarray))
+                and len(size) == adata.shape[0]
         ):
             size = np.array(size, dtype=float)
     else:
@@ -293,7 +292,7 @@ def __embedding(
     #     color=gene2, components = [1, 2], color=gene2, components=[2,3],
     # ]
     for count, (value_to_plot, component_idx) in enumerate(
-        itertools.product(color, idx_components)
+            itertools.product(color, idx_components)
     ):
         color_source_vector = _get_color_source_vector(
             adata,
@@ -342,7 +341,7 @@ def __embedding(
             try:
                 ax.set_title(title[count])
             except IndexError:
-                logg.warning(
+                logging.warning(
                     "The title list is shorter than the number of panels. "
                     "Using 'color' value instead for some plots."
                 )

@@ -2,13 +2,12 @@ import sklearn
 import pandas as pd
 import numpy as np
 import scanpy as sc
-import seaborn as sns
 from ._nmi import nmi
 
 
 def __opt_louvain(adata, label_key, cluster_key, function=None, resolutions=None,
-                use_rep=None,
-                inplace=True, plot=False, force=True, verbose=True, **kwargs):
+                  use_rep=None,
+                  inplace=True, force=True, verbose=True, **kwargs):
     """
     params:
         label_key: name of column in adata.obs containing biological labels to be
@@ -28,10 +27,10 @@ def __opt_louvain(adata, label_key, cluster_key, function=None, resolutions=None
         clustering: only if `inplace=False`, return cluster assignment as `pd.Series`
         plot: if `plot=True` plot the score profile over resolution
     """
-    
+
     if function is None:
         function = nmi
-    
+
     if cluster_key in adata.obs.columns:
         if force:
             if verbose:
@@ -41,11 +40,11 @@ def __opt_louvain(adata, label_key, cluster_key, function=None, resolutions=None
             raise ValueError(f"cluster key {cluster_key} already exists in " +
                              "adata, please remove the key or choose a different name." +
                              "If you want to force overwriting the key, specify `force=True`")
-    
+
     if resolutions is None:
         n = 20
-        resolutions = [2*x/n for x in range(1,n+1)]
-    
+        resolutions = [2 * x / n for x in range(1, n + 1)]
+
     score_max = 0
     res_max = resolutions[0]
     clustering = None
@@ -67,18 +66,14 @@ def __opt_louvain(adata, label_key, cluster_key, function=None, resolutions=None
             res_max = res
             clustering = adata.obs[cluster_key]
         del adata.obs[cluster_key]
-    
+
     if verbose:
         print(f'optimised clustering against {label_key}')
         print(f'optimal cluster resolution: {res_max}')
         print(f'optimal score: {score_max}')
-    
+
     score_all = pd.DataFrame(zip(resolutions, score_all), columns=('resolution', 'score'))
-    if plot:
-        # score vs. resolution profile
-        sns.lineplot(data= score_all, x='resolution', y='score').set_title('Optimal cluster resolution profile')
-        plt.show()
-    
+
     if inplace:
         adata.obs[cluster_key] = clustering
         return res_max, score_max, score_all
@@ -95,12 +90,12 @@ def __silhouette(adata, group_key, metric='euclidean', embed='X_pca', scale=True
         raise KeyError(f'{embed} not in obsm')
     asw = sklearn.metrics.silhouette_score(adata.obsm[embed], adata.obs[group_key], metric=metric)
     if scale:
-        asw = (asw + 1)/2
+        asw = (asw + 1) / 2
     return asw
 
 
-def __silhouette_batch(adata, batch_key, group_key, metric='euclidean', 
-                     embed='X_pca', verbose=True, scale=True):
+def __silhouette_batch(adata, batch_key, group_key, metric='euclidean',
+                       embed='X_pca', verbose=True, scale=True):
     """
     Silhouette score of batch labels subsetted for each group.
     params:
@@ -115,9 +110,9 @@ def __silhouette_batch(adata, batch_key, group_key, metric='euclidean',
     if embed not in adata.obsm.keys():
         print(adata.obsm.keys())
         raise KeyError(f'{embed} not in obsm')
-    
+
     sil_all = pd.DataFrame(columns=['group', 'silhouette_score'])
-    
+
     for group in adata.obs[group_key].unique():
         adata_group = adata[adata.obs[group_key] == group]
         if adata_group.obs[batch_key].nunique() == 1:
@@ -129,18 +124,18 @@ def __silhouette_batch(adata, batch_key, group_key, metric='euclidean',
         if scale:
             # scale s.t. highest number is optimal
             sil_per_group = [1 - i for i in sil_per_group]
-        d = pd.DataFrame({'group' : [group]*len(sil_per_group), 'silhouette_score' : sil_per_group})
-        sil_all = sil_all.append(d)    
+        d = pd.DataFrame({'group': [group] * len(sil_per_group), 'silhouette_score': sil_per_group})
+        sil_all = sil_all.append(d)
     sil_all = sil_all.reset_index(drop=True)
     sil_means = sil_all.groupby('group').mean()
-    
+
     if verbose:
         print(f'mean silhouette per cell: {sil_means}')
     return sil_all, sil_means
 
 
-def __isolated_labels(adata, label_key, batch_key, cluster_key="iso_cluster", 
-                    cluster=True, n=None, all_=False, verbose=True):
+def __isolated_labels(adata, label_key, batch_key, cluster_key="iso_cluster",
+                      cluster=True, n=None, all_=False, verbose=True):
     """
     score how well labels of isolated labels are distiguished in the dataset by
         1. clustering-based approach
@@ -155,13 +150,13 @@ def __isolated_labels(adata, label_key, batch_key, cluster_key="iso_cluster",
         by default, mean of scores for each isolated label
         retrieve dictionary of scores for each label if `all_` is specified
     """
-    
+
     scores = {}
     isolated_labels = __get_isolated_labels(adata, label_key, batch_key, cluster_key, n=n, verbose=verbose)
     for label in isolated_labels:
         score = __score_isolated_label(adata, label_key, cluster_key, label, cluster=cluster, verbose=verbose)
         scores[label] = score
-    
+
     if all_:
         return scores
     return np.mean(list(scores.values()))
@@ -171,17 +166,17 @@ def __get_isolated_labels(adata, label_key, batch_key, cluster_key, n, verbose):
     """
     get labels that are considered isolated by the number of batches
     """
-    
+
     tmp = adata.obs[[label_key, batch_key]].drop_duplicates()
     batch_per_lab = tmp.groupby(label_key).agg({batch_key: "count"})
-    
+
     # threshold for determining when label is considered isolated
     if n is None:
         n = batch_per_lab.min().tolist()[0]
-    
+
     if verbose:
         print(f"isolated labels: no more than {n} batches per label")
-    
+
     labels = batch_per_lab[batch_per_lab[batch_key] <= n].index.tolist()
     if len(labels) == 0 and verbose:
         print(f"no isolated labels with less than {n} batches")
@@ -226,12 +221,12 @@ def __score_isolated_label(adata, label_key, cluster_key, label, cluster=True, v
     else:
         adata_tmp.obs['group'] = adata_tmp.obs[label_key] == label
         score = __silhouette(adata_tmp, group_key='group', **kwargs)
-    
+
     del adata_tmp
-    
+
     if verbose:
         print(f"{label}: {score}")
-    
+
     return score
 
 
@@ -240,11 +235,11 @@ def silhouette(adata, batch_key='orig.ident', cell_label='paper.cell.type', embe
     sil_global = __silhouette(adata, group_key=cell_label, embed=embed, metric='euclidean')
     # silhouette coefficient per batch
     _, sil_clus = __silhouette_batch(adata, batch_key=batch_key, group_key=cell_label,
-                                       embed=embed, metric='euclidean', verbose=False)
+                                     embed=embed, metric='euclidean', verbose=False)
     sil_clus = sil_clus['silhouette_score'].mean()
     il_score_sil = __isolated_labels(adata, label_key=cell_label, batch_key=batch_key,
-                                       cluster=False, n=1, verbose=False)
+                                     cluster=False, n=1, verbose=False)
     il_score_clus = __isolated_labels(adata, label_key=cell_label, batch_key=batch_key,
-                                cluster=True, n=1, verbose=False)
-    
+                                      cluster=True, n=1, verbose=False)
+
     return sil_global, sil_clus, il_score_clus, il_score_sil

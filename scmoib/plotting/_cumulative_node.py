@@ -7,5 +7,5 @@ def cumulative_node(adata, title=None, figsize=(10, 10)):
     sns.ecdfplot(adata.uns['node_metrics']['nodes_count'])
     sns.kdeplot(adata.uns['node_metrics']['nodes_count'], cumulative=True, color='r', linestyle="dashed")
     ax.set(xlabel='Number of nodes between matching barcodes',
-           ylabel='Proportion of matching barcodes within a given number of nodes', 
+           ylabel='Proportion of matching barcodes within a given number of nodes',
            title=title)

@@ -19,10 +19,10 @@ metrics
 
 From Atai
 - do we need onmi and nmi_Lanc?
-- check every script for deprecated "neighbors" problem
 
 package
 -------
 - requirements ? 
 - unit test ? (I vote against it because I am lazy)
 - let's setup the automated checks on github like Kris did for episcanpy @Anna
+- refine umap_barcodes (got critical errors from pycharm)

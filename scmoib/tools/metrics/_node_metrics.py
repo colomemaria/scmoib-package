@@ -10,9 +10,6 @@ def node_metrics(adata, bc_list1, bc_list2, cell_type, n_jobs=None):
     ----------
     adata: AnnData object
         AnnData object
-       
-    adata_id: str
-        Data ID for metrics dataframe.
             
     bc_list1: list
             
@@ -38,14 +35,14 @@ def node_metrics(adata, bc_list1, bc_list2, cell_type, n_jobs=None):
     num_inf = 2 * np.where(dists == float('inf'))[0].shape[0]
     disc_ratio = num_inf / len(adata.obs.index)
     paths = list(np.array(tmp_res[1], dtype=object)[np.where(dists != float('inf'))])
-    
+
     if num_inf == dists.shape[0]:
         nodes_count = []
         mean_nodes = float('inf')
     else:
         nodes_count = list(map(lambda x: len(x) - 2, paths))
-        mean_nodes = np.array(nodes_count).mean() 
-        
+        mean_nodes = np.array(nodes_count).mean()
+
     cell_type_dist = {}
     for i in paths:
         key = adata.obs.loc[i[0], cell_type]
@@ -53,14 +50,9 @@ def node_metrics(adata, bc_list1, bc_list2, cell_type, n_jobs=None):
 
     for i in cell_type_dist.keys():
         cell_type_dist[i] = np.mean(cell_type_dist[i])
-    
-    node_metrics = {}
-    node_metrics['num_inf'] = num_inf
-    node_metrics['mean_nodes'] = mean_nodes
-    node_metrics['dists'] = dists
-    node_metrics['nodes_count'] = nodes_count
-    node_metrics['mean_nodes_per_cell_type'] = cell_type_dist
-    node_metrics['disc_ratio'] = disc_ratio
+
+    node_metrics = {'num_inf': num_inf, 'mean_nodes': mean_nodes, 'dists': dists, 'nodes_count': nodes_count,
+                    'mean_nodes_per_cell_type': cell_type_dist, 'disc_ratio': disc_ratio}
     adata.uns['node_metrics'] = node_metrics
-    
+
     return num_inf, mean_nodes, disc_ratio

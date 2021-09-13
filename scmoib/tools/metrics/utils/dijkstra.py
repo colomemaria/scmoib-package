@@ -5,7 +5,7 @@ import numpy as np
 
 
 def __dijkstra(edges, f, t):
-    '''Finds the shortest path between two nodes by using binary heap version of Dijkstra algorithm.
+    """Finds the shortest path between two nodes by using binary heap version of Dijkstra algorithm.
     
     Parameters
     ----------
@@ -15,21 +15,23 @@ def __dijkstra(edges, f, t):
         Start node.
     t: str
         Target node.
-    '''
+    """
     g = defaultdict(list)
-    for l,r,c in edges:
-        g[l].append((c,r))
+    for l, r, c in edges:
+        g[l].append((c, r))
 
-    q, seen, mins = [(0,f,())], set(), {f: 0}
+    q, seen, mins = [(0, f, ())], set(), {f: 0}
     while q:
-        (cost,v1,path) = heappop(q)
+        (cost, v1, path) = heappop(q)
         if v1 not in seen:
             seen.add(v1)
-            path += (v1, )
-            if v1 == t: return (cost, path)
+            path += (v1,)
+            if v1 == t:
+                return cost, path
 
             for c, v2 in g.get(v1, ()):
-                if v2 in seen: continue
+                if v2 in seen:
+                    continue
                 prev = mins.get(v2, None)
                 next = cost + c
                 if prev is None or next < prev:
@@ -40,7 +42,7 @@ def __dijkstra(edges, f, t):
 
 
 def __adj_matr_to_edges(adata):
-    '''Converts adjacency matrix to edges list
+    """Converts adjacency matrix to edges list
     
     Parameters
     ----------
@@ -52,20 +54,20 @@ def __adj_matr_to_edges(adata):
     edges: list
         List of graph's edges
     
-    '''
+    """
     adj_matr = adata.obsp['connectivities'].A
     inds = np.where(adj_matr > 0)
     bc_list = list(adata.obs.index)
     edges = []
-    for i,j in zip(inds[0], inds[1]):
+    for i, j in zip(inds[0], inds[1]):
         edges.append((bc_list[i], bc_list[j], adj_matr[i, j]))
     return edges
 
 
 def __batch_generator(list1, list2, num_processes):
-    '''
+    """
     None
-    '''
+    """
     batch_size = len(list1) // num_processes
     for i in range(num_processes):
         ind1, ind2 = batch_size * i, batch_size * (i + 1)
@@ -75,11 +77,11 @@ def __batch_generator(list1, list2, num_processes):
 
 
 def __calculate_paths(edges, list1, list2, queue):
-    '''
+    """
     Function for multiprocessing step
-    '''
+    """
     res = []
-    for i,j in zip(list1, list2):
+    for i, j in zip(list1, list2):
         tmp_res = __dijkstra(edges, i, j)
         res.append((tmp_res[0], tmp_res[1]))
     queue.put(res)
@@ -119,5 +121,5 @@ def run_dijkstra(adata, bc_list1, bc_list2, n_jobs=None):
 
     for p in processes:
         p.join()
-        
+
     return results
