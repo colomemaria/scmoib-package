@@ -8,4 +8,4 @@ from ._metric_heatmap import metric_heatmap
 from ._node_distr import node_distr
 from ._river_plot import river_plot
 from ._river_plot_2_omics import river_plot_2_omics
-from ._umap import umap_barcodes
+from ._umap_barcodes import umap_barcodes

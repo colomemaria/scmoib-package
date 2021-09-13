@@ -11,6 +11,7 @@ def graph_connectivity(adata_post, label_key):
         raise KeyError('Please compute the neighborhood graph before running this '
                        'function!')
 
+    adata_post.obs[label_key] = adata_post.obs[label_key].astype('category')
     clust_res = [] 
 
     for ct in adata_post.obs[label_key].cat.categories:

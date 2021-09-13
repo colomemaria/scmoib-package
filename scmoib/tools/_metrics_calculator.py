@@ -139,7 +139,7 @@ class MetricsCalculator:
         
     def homogeneity(self, adata, adata_id, group1, group2):
         """
-        Calculate Homogeneity score (NMI)
+        Calculate Homogeneity score.
         
         Parameters
         ----------
@@ -156,18 +156,36 @@ class MetricsCalculator:
         self.__check_key(adata_id)
         self.metrics[adata_id]['homogeneity'] = metrics.homogeneity(adata, group1, group2)
     
-    def _average_dist_between_matching_barcodes(self, adata, adata_id, cell_names=None, cell_type=None, absolute=True):
+    def _average_dist_between_matching_barcodes(self, adata, adata_id, bc_list1, bc_list2, 
+                                                metric='euclidean', cell_type=None, absolute=True):
+        """
+        Parameters
+        ----------
+        adata : coembed multiomic object
+        bc_list1 :
+        bc_list2 :
+        omic_layer : obs variable containing the batch/omic layer of origin
+        cell_type : obs variable containing the ground truth cell type
+        absolute :
+
+        Returns
+        -------
+        
+        """
         result = metrics.average_distance_between_matching_barcodes(adata, 
-                                                                cell_names=cell_names, 
-                                                                cell_type=cell_type, 
-                                                                absolute=absolute)
+                                                                    bc_list1, 
+                                                                    bc_list2,
+                                                                    metric=metric,
+                                                                    cell_type=cell_type, 
+                                                                    absolute=absolute) 
+                                                              
         if isinstance(result, float):
             self.__check_key(adata_id)
             self.metrics[adata_id]['pairwise_distance'] = result
         elif isinstance(result, dict):
             adata.uns['average_dist_per_cluster'] = result
 
-    def _accuracy_paired_omics(self, adata, adata_id, omic_layer, variable, cell_name=None, percent=False):
+    def _accuracy_paired_omics(self, adata, adata_id, bc_list1, bc_list2, omic_layer, variable, percent=False):
         """
         will match cell barcode from paired measurement for 2 layers. 
         I will return the ratio of cells for which the RNA and ATAC barcode end up in the same cluster.
@@ -187,14 +205,15 @@ class MetricsCalculator:
         """
 
         self.__check_key(adata_id)
-        self.metrics[adata_id] = metrics.accuracy_paired_omics(adata, 
-                                                           omic_layer, 
-                                                           variable, 
-                                                           cell_name=cell_name, 
-                                                           percent=percent)
+        self.metrics[adata_id]['accuracy'] = metrics.accuracy_paired_omics(adata, 
+                                                                           bc_list1, 
+                                                                           bc_list2,                                        
+                                                                           omic_layer, 
+                                                                           variable,
+                                                                           percent=False)
     
-    def _accuracy_paired_omics_per_cell_type(self, adata, adata_id, omic_layer, variable, 
-                                             cell_type, cell_name=None, percent=False):
+    def _accuracy_paired_omics_per_cell_type(self, adata, adata_id, bc_list1, bc_list2, omic_layer, 
+                                             variable, cell_type, percent=False):
         
         """
         will match cell barcode from paired measurement for 2 layers. 
@@ -216,10 +235,13 @@ class MetricsCalculator:
 
         """
         adata.uns['acc_cell_type'] = metrics.accuracy_paired_omics_per_cell_type(adata, 
+                                                                                 bc_list1, 
+                                                                                 bc_list2, 
                                                                                  omic_layer, 
                                                                                  variable, 
                                                                                  cell_type, 
-                                                                                 cell_name=cell_name, 
-                                                                                 percent=percent)
-    def _graph_connectivity(self, adata, adata_id):
-        pass
+                                                                                 percent=False)
+    
+    def _graph_connectivity(self, adata, adata_id, label_key):
+        self.__check_key(adata_id)
+        self.metrics[adata_id][f'graph connectivity {label_key}'] = metrics.graph_connectivity(adata, label_key)
