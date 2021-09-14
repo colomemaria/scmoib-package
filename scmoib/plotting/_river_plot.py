@@ -18,6 +18,8 @@ def river_plot(adata,
     scale : float number. above 1 it increase the resolution. below 1 it reudce the resolution
     only matter when saving the plot.
     """
+    adata.obs[source] = adata.obs[source].astype('str').astype('category')
+    adata.obs[target] = adata.obs[target].astype('str').astype('category')
     df_nodes, df_links = __tool_sankey(adata, source, target, cell_number=cell_number)
     __plot_sankey(df_nodes, df_links,
                   title=title,
