@@ -14,4 +14,4 @@ def pairwise_distance(adata, metric, cell_type, title=None, rotation=90):
     if key not in adata.obs.keys():
         raise KeyError(f'Please compute the {metric} metric for your dataset')
         
-    sc.pl.violin(pbmc, keys=key, groupby=cell_type, title=title, rotation=rotation)
+    sc.pl.violin(adata, keys=key, groupby=cell_type, title=title, rotation=rotation)
