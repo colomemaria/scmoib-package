@@ -1,33 +1,40 @@
 from .utils import dijkstra
 import numpy as np
+from anndata import AnnData
+from typing import List, Union, Tuple
 
 
-def node_metrics(adata, bc_list1, bc_list2, cell_type, n_jobs=None):
+def node_metrics(
+        adata: AnnData,
+        bc_list1: List[str],
+        bc_list2: List[str],
+        cell_type: str,
+        n_jobs: Union[int, None] = None
+) -> Tuple[float, float, float]:
     """
     Calculates node metrics using shortest paths between matching barcodes.
         
     Parameters
     ----------
-    adata: AnnData object
-        AnnData object
-            
-    bc_list1: list
-            
-    bc_list2: list
-        
-    cell_type: str
-        obs variable containing the ground truth cell type
-        
-    n_jobs: None or int, optional
-        The number of jobs to use for the computation. None means 1
+    adata
+        AnnData object.
+    bc_list1
+        RNA matching barcodes.
+    bc_list2
+        ATAC matching barcodes.
+    cell_type
+        obs variable containing the ground truth cell type.
+    n_jobs
+        The number of jobs to use for the computation. None means 1.
     
     Returns
     -------
     num_inf: int
-    
-    mean_nodes: float
-    
-    disc_ratio: float
+        Number of disconnected barcodes.
+    mean_nodes
+        Mean node distance between barcodes.
+    disc_ratio
+        The fraction of disconnected barcodes from the total.
     """
     results = dijkstra.run_dijkstra(adata, bc_list1, bc_list2, n_jobs=n_jobs)
     tmp_res = list(zip(*results))
@@ -51,8 +58,8 @@ def node_metrics(adata, bc_list1, bc_list2, cell_type, n_jobs=None):
     for i in cell_type_dist.keys():
         cell_type_dist[i] = np.mean(cell_type_dist[i])
 
-    node_metrics = {'num_inf': num_inf, 'mean_nodes': mean_nodes, 'dists': dists, 'nodes_count': nodes_count,
-                    'mean_nodes_per_cell_type': cell_type_dist, 'disc_ratio': disc_ratio}
-    adata.uns['node_metrics'] = node_metrics
+    metrics = {'num_inf': num_inf, 'mean_nodes': mean_nodes, 'dists': dists, 'nodes_count': nodes_count,
+               'mean_nodes_per_cell_type': cell_type_dist, 'disc_ratio': disc_ratio}
+    adata.uns['metrics'] = metrics
 
     return num_inf, mean_nodes, disc_ratio

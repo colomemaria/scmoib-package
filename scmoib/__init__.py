@@ -11,7 +11,7 @@ __author__ = ', '.join([
     'Anna Danese',
 ])
 __email__ = ', '.join([
-	'atay.dobrynin@gmail.com',
+    'atay.dobrynin@gmail.com',
     'anna.danese@helmholtz-muenchen.de',
     # We don’t need all, the main authors are sufficient.
 ])

@@ -1,13 +1,11 @@
 from scanpy.plotting._tools.scatterplots import _get_palette
-from scanpy._utils import sanitize_anndata, _doc_params, Empty, _empty
 from scanpy.plotting._tools.scatterplots import _get_data_points, _get_color_source_vector, _utils
 from scanpy.plotting._tools.scatterplots import _color_vector, settings, _get_vmin_vmax, _basis2name
-import scanpy.plotting._utils
-import scanpy._utils
-import logging
-from scanpy._utils import NeighborsView
-from scanpy.plotting._utils import _get_basis
 from scanpy.plotting._tools.scatterplots import _add_categorical_legend
+from scanpy.plotting._utils import _get_basis
+from scanpy._utils import sanitize_anndata, NeighborsView
+
+import logging
 import warnings
 import itertools
 from packaging.version import parse
@@ -15,15 +13,13 @@ import networkx as nx
 
 import collections.abc as cabc
 from copy import copy
-from typing import Union, Optional, Sequence, Any, Mapping, List, Tuple, Callable
-
+from typing import Union, Optional, Sequence, Any, Mapping, Tuple, Callable, List
 import numpy as np
 import pandas as pd
 from anndata import AnnData
 from cycler import Cycler
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from pandas.api.types import is_categorical_dtype
 import matplotlib
 from matplotlib import pyplot as pl, colors
 from matplotlib.cm import get_cmap
@@ -59,7 +55,34 @@ _FontSize = Literal[
 VMinMax = Union[str, float, Callable[[Sequence[float]], float]]
 
 
-def umap_barcodes(adata, bc_list1, bc_list2, basis='umap', color=None, edges=True, edges_width=0.1):
+def umap_barcodes(
+        adata: AnnData,
+        bc_list1: List[str],
+        bc_list2: List[str],
+        basis: str = 'umap',
+        color: Union[str, Sequence[str], None] = None,
+        edges: bool = True,
+        edges_width: float = 0.1
+) -> None:
+    """
+
+    Parameters
+    ----------
+    adata
+        Annotated data matrix
+    bc_list1
+        List of barcodes
+    bc_list2
+        List of barcodes matched with bc_list1
+    basis
+        Name of the `obsm` basis to use.
+    color
+
+    edges
+        If True shows the edges between matched barcodes.
+    edges_width
+        Width of edges.
+    """
     bc_list = list(adata.obs.index)
     edge_list = list(zip([bc_list.index(i) for i in bc_list1], [bc_list.index(j) for j in bc_list2]))
     __embedding(adata, basis=basis, color=color, edges=edges, edges_width=edges_width, edge_list=edge_list)
@@ -310,7 +333,7 @@ def __embedding(
             na_color=na_color,
         )
 
-        ### Order points
+        # Order points
         order = slice(None)
         if sort_order is True and value_to_plot is not None and categorical is False:
             # Higher values plotted on top, null values on bottom

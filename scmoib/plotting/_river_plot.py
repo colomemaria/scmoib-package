@@ -3,20 +3,37 @@ import numpy as np
 from plotly.offline import iplot
 import plotly.io as pio
 from scanpy.plotting._tools.scatterplots import _get_palette
+from anndata import AnnData
+from typing import Union
 
 
-def river_plot(adata,
-               source,
-               target,
-               cell_number=True,
-               title='River plot (Sankey Diagram)',
-               save=None,
-               scale=1):
+def river_plot(
+        adata: AnnData,
+        source: str,
+        target: str,
+        cell_number: bool = True,
+        title: str = 'River plot (Sankey Diagram)',
+        save: Union[str, None] = None,
+        scale: float = 1
+) -> None:
     """
-    cell_number : Bool If True prints the number of cells in each categorie.
-    Else, doesn't display it
-    scale : float number. above 1 it increase the resolution. below 1 it reudce the resolution
-    only matter when saving the plot.
+
+    Parameters
+    ----------
+    adata:
+        Annotated data matrix.
+    source
+        Obs variable containing source annotation.
+    target
+        Obs variable containing target annotation.
+    cell_number
+        If True prints the number of cells in each category. Else, doesn't display it.
+    title
+        Title for the plot.
+    save
+        Save the plot.
+    scale
+        Above 1 it increase the resolution. Below 1 it reduce the resolution. Only matter when saving the plot.
     """
     adata.obs[source] = adata.obs[source].astype('str').astype('category')
     adata.obs[target] = adata.obs[target].astype('str').astype('category')
@@ -31,10 +48,10 @@ def __tool_sankey(adata, source, target, cell_number=True):
     # extract key_infos in adata
     key_infos = pd.crosstab(adata.obs[target], adata.obs[source])
 
-    ###### NODES ######
+    # NODES
     # transform key_infos into the nodes df
     nodes = [['ID', 'Label', 'Color']]
-    if cell_number == False:
+    if not cell_number:
         label_list = key_infos.columns.tolist() + key_infos.index.tolist()
     else:
         target_cell_nb = pd.crosstab(adata.obs[target], adata.obs[target], margins=True)
@@ -72,7 +89,7 @@ def __tool_sankey(adata, source, target, cell_number=True):
         tmp_list = [number, label_list[number], colors[number]]
         nodes.append(tmp_list)
 
-    ###### LINKS ######
+    # LINKS
     key_infos_values = key_infos.values.tolist()
     key_infos_index = key_infos.index.tolist()
 

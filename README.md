@@ -9,16 +9,17 @@ metrics
 -------
 - can we easily plot the mean weighted distance and the node count could be plotted as a umap. 
 - can we make some kind histogram/distribution plot for teh weighted distance ? 
-- can we check if the silhouette score has to be on the PCA space all the time or can it work on the knn or something ? (general question )
+- can we check if the silhouette score has to be on the PCA space all the time or can it work on the knn o
+- can we easily plot the mean weighted distance and the node count could be plotted as a umap. 
+- can we make some kind histogram/distribution plot for teh weighted distance ? 
+- can we check if the silhouette score has to be on the PCA space all the time or can it work on the knn orkey_added=None,
+                      copy=False, something ? (general question )
 - make the functions that are part the class directly available (then they return values)
 
 - adjust the plotting functions based on how we save the metrics. 
 - Anna fix your weird graoh UMAP ! 
 - add annotations to each functions. 
 - clean the metrics_stuff (maybe put it in tools as util or a subdirectory) it's up to atai
-
-From Atai
-- do we need onmi and nmi_Lanc?
 
 package
 -------

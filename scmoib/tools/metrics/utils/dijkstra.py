@@ -2,18 +2,21 @@ from multiprocessing import Process, Queue
 from collections import defaultdict
 from heapq import *
 import numpy as np
+import warnings
+from anndata import AnnData
+from typing import Union, Tuple, List
 
 
-def __dijkstra(edges, f, t):
+def __dijkstra(edges: List[Tuple[str, str, float]], f: str, t: str):
     """Finds the shortest path between two nodes by using binary heap version of Dijkstra algorithm.
     
     Parameters
     ----------
-    edges: list
+    edges
         List of graph's edges.
-    f: str
+    f
         Start node.
-    t: str
+    t
         Target node.
     """
     g = defaultdict(list)
@@ -41,19 +44,18 @@ def __dijkstra(edges, f, t):
     return float("inf"), None
 
 
-def __adj_matr_to_edges(adata):
-    """Converts adjacency matrix to edges list
+def __adj_matr_to_edges(adata: AnnData) -> List[Tuple[str, str, float]]:
+    """Converts adjacency matrix into the list of edges.
     
     Parameters
     ----------
-    adj_matr: np.array
-        Graph's adjacency matrix
+    adata
+        Anndata object containing connectivity matrix
     
     Returns
     -------
-    edges: list
-        List of graph's edges
-    
+    edges
+        List of graph's edges with their weights
     """
     adj_matr = adata.obsp['connectivities'].A
     inds = np.where(adj_matr > 0)
@@ -64,9 +66,17 @@ def __adj_matr_to_edges(adata):
     return edges
 
 
-def __batch_generator(list1, list2, num_processes):
-    """
-    None
+def __batch_generator(list1: List[str], list2: List[str], num_processes: int):
+    """Batch generator for multiprocessing step.
+
+    Parameters
+    ----------
+    list1
+        RNA matching barcodes
+    list2
+        ATAC matching barcodes
+    num_processes
+        The number of jobs to use for the computation.
     """
     batch_size = len(list1) // num_processes
     for i in range(num_processes):
@@ -76,9 +86,19 @@ def __batch_generator(list1, list2, num_processes):
         yield list1[ind1:ind2], list2[ind1:ind2]
 
 
-def __calculate_paths(edges, list1, list2, queue):
-    """
-    Function for multiprocessing step
+def __calculate_paths(edges: List[Tuple[str, str, float]], list1: List[str], list2: List[str], queue: Queue):
+    """Wrapper for multiprocessing step.
+
+    Parameters
+    ----------
+    edges
+        List of graph's edges with their weights.
+    list1
+        RNA matching barcodes.
+    list2
+        ATAC matching barcodes.
+    queue
+        Queue for storing results.
     """
     res = []
     for i, j in zip(list1, list2):
@@ -87,21 +107,42 @@ def __calculate_paths(edges, list1, list2, queue):
     queue.put(res)
 
 
-def run_dijkstra(adata, bc_list1, bc_list2, n_jobs=None):
+def run_dijkstra(
+        adata: AnnData,
+        bc_list1: List[str],
+        bc_list2: List[str],
+        n_jobs: Union[int, None] = None
+) -> List[Tuple[float, Tuple[str]]]:
     """
-    Calculate shortest paths for all pairs of nodes.
+    Calculate shortest paths for all pairs of barcodes.
     
     Parameters
     ----------
-    adata: AnnData object
-    
-    bc_list1: list
-    
-    bc_list2: list
-    
-    n_jobs: None or int, optional
-        The number of jobs to use for the computation. None means 1 
+    adata
+        Annotated data matrix
+    bc_list1
+        RNA matching barcodes
+    bc_list2
+        ATAC matching barcodes
+    n_jobs
+        The number of jobs to use for the computation. None means 1.
+
+    Returns
+    -------
+    results
+        List of shortest paths with their weights
     """
+    warnings.warn(
+        UserWarning(
+            'Warning! You are running the high load graph method.\n'
+            'Test run information:\n'
+            'CPU: 8 cores\n'
+            'Wall time: 6 minutes\n'
+            'RAM: 4 GB(?)\n'
+            'Number of barcode pairs: 11k'
+        )
+    )
+
     if not n_jobs or n_jobs <= 0:
         n_jobs = 1
     edges = __adj_matr_to_edges(adata)

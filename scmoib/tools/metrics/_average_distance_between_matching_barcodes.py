@@ -1,5 +1,7 @@
 from sklearn.metrics import pairwise_distances
 import numpy as np
+from typing import Union, Dict, List
+from anndata import AnnData
 
 
 def __get_pairs(adata, bc_list1, bc_list2):
@@ -25,8 +27,38 @@ def __distance_between_matching_barcodes(adata, bc_list1, bc_list2, metric='eucl
     adata.obs[f'{metric}_pairwise_distance_between_matching_barcodes'] = list_distance_barcodes
 
 
-def average_distance_between_matching_barcodes(adata, bc_list1, bc_list2, metric='euclidean', cell_type=None,
-                                               absolute=True):
+def average_distance_between_matching_barcodes(
+        adata: AnnData,
+        bc_list1: List[str],
+        bc_list2: List[str],
+        metric: str = 'euclidean',
+        cell_type: Union[str, None] = None,
+        absolute: bool = True
+) -> Union[float, Dict[float]]:
+    """
+    Computes the global average distance or the average distances for each cell type.
+
+    Parameters
+    ----------
+    adata
+        Annotated data matrix
+    bc_list1
+        RNA matching barcodes
+    bc_list2
+        ATAC matching barcodes
+    metric
+        Metric name ('euclidean' or 'cosine') # TODO
+    cell_type
+        Obs variable containing cell type annotation
+    absolute
+        If True computes the absolute value of distances.
+        Else computes normalized distances.
+
+    Returns
+    -------
+    If cell_type is None returns the average distance between all matching barcodes.
+    Else returns the dictionary of average distances for each cell type
+    """
     __distance_between_matching_barcodes(adata, bc_list1, bc_list2, metric=metric, absolute=absolute)
 
     if not cell_type:

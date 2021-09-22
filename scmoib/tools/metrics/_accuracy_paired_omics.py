@@ -1,25 +1,39 @@
 from sklearn.metrics import accuracy_score
+from anndata import AnnData
+from typing import List
 
 
-def accuracy_paired_omics(adata, bc_list1, bc_list2, omic_layer, variable, percent=False):
+def accuracy_paired_omics(
+        adata: AnnData,
+        bc_list1: List[str],
+        bc_list2: List[str],
+        omic_layer: str,
+        variable: str,
+        percent: bool = False
+) -> float:
     """
-    will match cell barcode from paired measurement for 2 layers. 
+    Will match cell barcode from paired measurement for 2 layers.
     I will return the ratio of cells for which the RNA and ATAC barcode end up in the same cluster.
     
     Parameters
     ----------
-    
-    adata : coembed multiomic object
-    bc_list1: RNA matching barcodes
-    bc_list2: ATAC matching barcodes
-    variable : cell clustering obs variable
-    omic_layer : obs variable containing the batch/omic layer of origin
-    percent:  return percentage. if false, return ratio
+    adata
+        coembed multiomic object.
+    bc_list1
+        RNA matching barcodes.
+    bc_list2
+        ATAC matching barcodes.
+    variable
+        Cell clustering obs variable.
+    omic_layer
+        obs variable containing the batch/omic layer of origin.
+    percent
+        If True returns the percentage. If False returns the ratio.
     
     Returns
     -------
-    
-    accuracy: float ratio of cells for which the barcodes end up in the same barcodes
+    accuracy
+        float ratio of cells for which the barcodes end up in the same barcodes.
     
     """
 

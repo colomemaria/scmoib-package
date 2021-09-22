@@ -1,7 +1,9 @@
-## This original version of this code was written for the scIB project
+# This original version of this code was written for the scIB project
 # For more information see: https://github.com/theislab/scib
 # Paper to cite for this code : https://www.biorxiv.org/content/10.1101/2020.05.22.111161v2
-# M. D. Luecken, M. Bu ̈ttner, K. Chaichoompu, A. Danese, M. Interlandi, M. F. Mueller, D. C. Strobl, L. Zappia, M. Dugas, M. Colome ́-Tatche ́, and F. J. Theis. Benchmarking atlas-level data integration in single-cell genomics. bioRxiv, page 2020.05.22.111161, May 2020. doi: 10.1101/2020.05.22.111161.
+# M. D. Luecken, M. Bu ̈ttner, K. Chaichoompu, A. Danese, M. Interlandi, M. F. Mueller, D. C. Strobl, L. Zappia,
+# M. Dugas, M. Colome ́-Tatche ́, and F. J. Theis. Benchmarking atlas-level data integration in single-cell genomics.
+# bioRxiv, page 2020.05.22.111161, May 2020. doi: 10.1101/2020.05.22.111161.
 
 from .utils.utils import checkAdata, checkBatch
 import sklearn
@@ -9,31 +11,45 @@ import pandas as pd
 import subprocess
 import tempfile
 from os import remove
+from anndata import AnnData
+from typing import Union
 
 ERROR_MESSAGE = 'Please provide the directory of the compiled C code from' \
                 'https://sites.google.com/site/andrealancichinetti/mutual3.tar.gz'
 
 
-def nmi(adata, group1, group2, method="arithmetic", nmi_dir=None):
+def nmi(
+        adata: AnnData,
+        group1: str,
+        group2: str,
+        method: str = "arithmetic",
+        nmi_dir: Union[str, None] = None
+) -> float:
     """
     Normalized mutual information NMI based on 2 different cluster assignments `group1` and `group2`
     Parameters
     ----------
-    adata: Anndata object
-    group1: column name of `adata.obs` or group assignment
-    group2: column name of `adata.obs` or group assignment
-    method: NMI implementation
+    adata
+        Annotated data matrix
+    group1
+        column name of `adata.obs` or group assignment
+    group2
+        column name of `adata.obs` or group assignment
+    method
+        NMI implementation:
         'max': scikit method with `average_method='max'`
         'min': scikit method with `average_method='min'`
         'geometric': scikit method with `average_method='geometric'`
         'arithmetic': scikit method with `average_method='arithmetic'`
         'Lancichinetti': implementation by A. Lancichinetti 2009 et al.
         'ONMI': implementation by Aaron F. McDaid et al. (https://github.com/aaronmcdaid/Overlapping-NMI) Hurley 2011
-    nmi_dir: directory of compiled C code if 'Lancichinetti' or 'ONMI' are specified as `method`. Compilation should be done as specified in the corresponding README.
+    nmi_dir
+        Directory of compiled C code if 'Lancichinetti' or 'ONMI' are specified as `method`.
+        Compilation should be done as specified in the corresponding README.
     
     Returns
     -------
-    nmi_value: float
+    nmi_value
         normalized mutual information (NMI)
     """
 

@@ -1,13 +1,17 @@
-## This original version of this code was written for the scIB project
+# This original version of this code was written for the scIB project
 # For more information see: https://github.com/theislab/scib
 # Paper to cite for this code : https://www.biorxiv.org/content/10.1101/2020.05.22.111161v2
-# M. D. Luecken, M. Bu ̈ttner, K. Chaichoompu, A. Danese, M. Interlandi, M. F. Mueller, D. C. Strobl, L. Zappia, M. Dugas, M. Colome ́-Tatche ́, and F. J. Theis. Benchmarking atlas-level data integration in single-cell genomics. bioRxiv, page 2020.05.22.111161, May 2020. doi: 10.1101/2020.05.22.111161.
+# M. D. Luecken, M. Bu ̈ttner, K. Chaichoompu, A. Danese, M. Interlandi, M. F. Mueller, D. C. Strobl, L. Zappia,
+# M. Dugas, M. Colome ́-Tatche ́, and F. J. Theis. Benchmarking atlas-level data integration in single-cell genomics.
+# bioRxiv, page 2020.05.22.111161, May 2020. doi: 10.1101/2020.05.22.111161.
 
 import sklearn
 import pandas as pd
 import numpy as np
 import scanpy as sc
 from ._nmi import nmi
+from anndata import AnnData
+from typing import Tuple
 
 
 def __opt_louvain(adata, label_key, cluster_key, function=None, resolutions=None,
@@ -88,7 +92,8 @@ def __opt_louvain(adata, label_key, cluster_key, function=None, resolutions=None
 
 def __silhouette(adata, group_key, metric='euclidean', embed='X_pca', scale=True):
     """
-    wrapper for sklearn silhouette function values range from [-1, 1] with 1 being an ideal fit, 0 indicating overlapping clusters and -1 indicating misclassified cells
+    wrapper for sklearn silhouette function values range from [-1, 1] with 1 being an ideal fit,
+    0 indicating overlapping clusters and -1 indicating misclassified cells
     """
     if embed not in adata.obsm.keys():
         print(adata.obsm.keys())
@@ -235,7 +240,35 @@ def __score_isolated_label(adata, label_key, cluster_key, label, cluster=True, v
     return score
 
 
-def silhouette(adata, batch_key='orig.ident', cell_label='paper.cell.type', embed='X_pca'):
+def silhouette(
+        adata: AnnData,
+        batch_key: str = 'orig.ident',
+        cell_label: str = 'paper.cell.type',
+        embed: str = 'X_pca'
+) -> Tuple[float, float, float, float]:
+    """
+
+    Parameters
+    ----------
+    adata
+        Annotated data matrix
+    batch_key
+        Obs variable containing batch annotation
+    cell_label
+        Obs variable containing cell type annotation
+    embed
+        Obsm variable name
+    Returns
+    -------
+    sil_global
+        Global silhouette score
+    sil_clus
+        # TODO
+    il_score_clus
+        # TODO
+    il_score_sil
+        # TODO
+    """
     # global silhouette coefficient
     sil_global = __silhouette(adata, group_key=cell_label, embed=embed, metric='euclidean')
     # silhouette coefficient per batch
