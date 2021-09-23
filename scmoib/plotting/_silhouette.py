@@ -4,7 +4,7 @@ from typing import Union
 
 
 # TODO remove extra parameters
-def silhoutte(
+def silhouette(
         adata: AnnData,
         cluster_annot: str,
         value: str = 'X_pca',

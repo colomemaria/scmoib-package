@@ -10,3 +10,4 @@ from ._river_plot import river_plot
 from ._river_plot_2_omics import river_plot_2_omics
 from ._umap_barcodes import umap_barcodes
 from ._pairwise_distance import pairwise_distance
+from ._silhouette import silhouette

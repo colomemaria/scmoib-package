@@ -31,7 +31,7 @@ def mean_node_per_cell_type(
         Save the plot.
     """
     key = cell_type + '_colors'
-    cell_dist = adata.uns['node_metrics']['mean_nodes_per_cell_type']
+    cell_dist = adata.uns['metrics']['mean_nodes_per_cell_type']
     cell_dist = dict(sorted(cell_dist.items(), key=lambda x: x[0]))
     fig, ax = plt.subplots(figsize=figsize)
     if key in adata.uns.keys():

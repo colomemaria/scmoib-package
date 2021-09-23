@@ -29,7 +29,7 @@ def node_distr(
         Save the plot.
     """
 
-    v1, v2 = np.unique(adata.uns['node_metrics']['nodes_count'], return_counts=True)
+    v1, v2 = np.unique(adata.uns['metrics']['nodes_count'], return_counts=True)
     fig, ax = plt.subplots(figsize=figsize)
     sns.barplot(x=v1, y=v2, ax=ax)
     ax.set(xlabel='Number of nodes between barcodes', ylabel='Number of cell pairs', title=title)

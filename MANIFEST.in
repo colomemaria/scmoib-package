@@ -1,0 +1,3 @@
+include versioneer.py
+include scmoib/_version.py
+include requirements.txt

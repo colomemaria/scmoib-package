@@ -27,8 +27,8 @@ def cumulative_node(
         Save the plot.
     """
     fig, ax = plt.subplots(figsize=figsize)
-    sns.ecdfplot(adata.uns['node_metrics']['nodes_count'])
-    sns.kdeplot(adata.uns['node_metrics']['nodes_count'], cumulative=True, color='r', linestyle="dashed")
+    sns.ecdfplot(adata.uns['metrics']['nodes_count'])
+    sns.kdeplot(adata.uns['metrics']['nodes_count'], cumulative=True, color='r', linestyle="dashed")
     ax.set(xlabel='Number of nodes between matching barcodes',
            ylabel='Proportion of matching barcodes within a given number of nodes',
            title=title)

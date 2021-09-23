@@ -7,7 +7,7 @@ import versioneer
 from pathlib import Path
 
 try:
-    from episcanpy import __author__, __email__
+    from scmoib import __author__, __email__
 except ImportError:  # Deps not yet installed
     __author__ = __email__ = ''
 

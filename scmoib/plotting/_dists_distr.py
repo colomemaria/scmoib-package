@@ -31,7 +31,7 @@ def dists_distr(
         Save the plot.
     """
     fig, ax = plt.subplots(figsize=figsize)
-    sns.histplot(data=adata.uns['node_metrics']['dists'], ax=ax, bins=bins)
+    sns.histplot(data=adata.uns['metrics']['dists'], ax=ax, bins=bins)
     ax.set(xlabel='Weighted distance between barcodes', title=title)
     if save:
         plt.savefig(save)
