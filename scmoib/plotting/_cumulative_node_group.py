@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 from anndata import AnnData
-from typing import Sequence, Union, Tuple
+from typing import Sequence, Union, Tuple, Iterable
 
 
 def cumulative_node_group(
         adata_list: Sequence[AnnData],
-        legend: Tuple[str],
+        legend: Iterable[str],
         title: Union[str, None] = None,
         figsize: Tuple[float, float] = (10, 10),
         show: bool = True,

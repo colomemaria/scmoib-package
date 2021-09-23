@@ -1,12 +1,12 @@
 from sklearn.metrics import accuracy_score
 from anndata import AnnData
-from typing import List
+from typing import Iterable
 
 
 def accuracy_paired_omics(
         adata: AnnData,
-        bc_list1: List[str],
-        bc_list2: List[str],
+        bc_list1: Iterable[str],
+        bc_list2: Iterable[str],
         omic_layer: str,
         variable: str,
         percent: bool = False

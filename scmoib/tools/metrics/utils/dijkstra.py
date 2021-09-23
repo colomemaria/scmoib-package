@@ -4,7 +4,7 @@ from heapq import *
 import numpy as np
 import warnings
 from anndata import AnnData
-from typing import Union, Tuple, List
+from typing import Union, Tuple, List, Iterable
 
 
 def __dijkstra(edges: List[Tuple[str, str, float]], f: str, t: str):
@@ -66,7 +66,7 @@ def __adj_matr_to_edges(adata: AnnData) -> List[Tuple[str, str, float]]:
     return edges
 
 
-def __batch_generator(list1: List[str], list2: List[str], num_processes: int):
+def __batch_generator(list1: Iterable[str], list2: Iterable[str], num_processes: int):
     """Batch generator for multiprocessing step.
 
     Parameters
@@ -86,7 +86,7 @@ def __batch_generator(list1: List[str], list2: List[str], num_processes: int):
         yield list1[ind1:ind2], list2[ind1:ind2]
 
 
-def __calculate_paths(edges: List[Tuple[str, str, float]], list1: List[str], list2: List[str], queue: Queue):
+def __calculate_paths(edges: List[Tuple[str, str, float]], list1: Iterable[str], list2: Iterable[str], queue: Queue):
     """Wrapper for multiprocessing step.
 
     Parameters
@@ -109,10 +109,10 @@ def __calculate_paths(edges: List[Tuple[str, str, float]], list1: List[str], lis
 
 def run_dijkstra(
         adata: AnnData,
-        bc_list1: List[str],
-        bc_list2: List[str],
+        bc_list1: Iterable[str],
+        bc_list2: Iterable[str],
         n_jobs: Union[int, None] = None
-) -> List[Tuple[float, Tuple[str]]]:
+) -> List[Tuple[float, Tuple[str, ...]]]:
     """
     Calculate shortest paths for all pairs of barcodes.
     

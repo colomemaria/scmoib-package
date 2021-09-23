@@ -1,6 +1,6 @@
 from sklearn.metrics import pairwise_distances
 import numpy as np
-from typing import Union, Dict, List
+from typing import Union, Dict, Iterable
 from anndata import AnnData
 
 
@@ -29,12 +29,12 @@ def __distance_between_matching_barcodes(adata, bc_list1, bc_list2, metric='eucl
 
 def average_distance_between_matching_barcodes(
         adata: AnnData,
-        bc_list1: List[str],
-        bc_list2: List[str],
+        bc_list1: Iterable[str],
+        bc_list2: Iterable[str],
         metric: str = 'euclidean',
         cell_type: Union[str, None] = None,
         absolute: bool = True
-) -> Union[float, Dict[float]]:
+) -> Union[float, Dict[str, float]]:
     """
     Computes the global average distance or the average distances for each cell type.
 

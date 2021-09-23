@@ -11,7 +11,7 @@ import pandas as pd
 from anndata import AnnData
 
 
-def ari(adata: object, group1: object, group2: object) -> float:
+def ari(adata: AnnData, group1: object, group2: object) -> float:
     """
     Computes the ARI score.
     Parameters

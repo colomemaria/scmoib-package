@@ -1,13 +1,13 @@
 from .utils import dijkstra
 import numpy as np
 from anndata import AnnData
-from typing import List, Union, Tuple
+from typing import Iterable, Union, Tuple
 
 
 def node_metrics(
         adata: AnnData,
-        bc_list1: List[str],
-        bc_list2: List[str],
+        bc_list1: Iterable[str],
+        bc_list2: Iterable[str],
         cell_type: str,
         n_jobs: Union[int, None] = None
 ) -> Tuple[float, float, float]:

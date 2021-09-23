@@ -13,7 +13,7 @@ import networkx as nx
 
 import collections.abc as cabc
 from copy import copy
-from typing import Union, Optional, Sequence, Any, Mapping, Tuple, Callable, List
+from typing import Union, Optional, Sequence, Any, Mapping, Tuple, Callable, List, Iterable
 import numpy as np
 import pandas as pd
 from anndata import AnnData
@@ -57,8 +57,8 @@ VMinMax = Union[str, float, Callable[[Sequence[float]], float]]
 
 def umap_barcodes(
         adata: AnnData,
-        bc_list1: List[str],
-        bc_list2: List[str],
+        bc_list1: Iterable[str],
+        bc_list2: Iterable[str],
         basis: str = 'umap',
         color: Union[str, Sequence[str], None] = None,
         edges: bool = True,

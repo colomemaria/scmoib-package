@@ -1,6 +1,6 @@
 import pandas as pd
 from . import metrics
-from typing import Union, List
+from typing import Union, Iterable
 from anndata import AnnData
 
 
@@ -29,8 +29,8 @@ class MetricsCalculator:
             self,
             adata: AnnData,
             adata_id: str,
-            bc_list1: List[str],
-            bc_list2: List[str],
+            bc_list1: Iterable[str],
+            bc_list2: Iterable[str],
             cell_type: str,
             n_jobs: Union[int, None] = None
     ) -> None:
@@ -200,8 +200,8 @@ class MetricsCalculator:
             self,
             adata: AnnData,
             adata_id: str,
-            bc_list1: List[str],
-            bc_list2: List[str],
+            bc_list1: Iterable[str],
+            bc_list2: Iterable[str],
             metric: str = 'euclidean',
             cell_type: str = None,
             absolute: bool = True
@@ -241,8 +241,8 @@ class MetricsCalculator:
             self,
             adata: AnnData,
             adata_id: str,
-            bc_list1: List[str],
-            bc_list2: List[str],
+            bc_list1: Iterable[str],
+            bc_list2: Iterable[str],
             omic_layer: str,
             variable: str,
             percent: bool = False
@@ -282,8 +282,8 @@ class MetricsCalculator:
             self,
             adata: AnnData,
             adata_id: str,
-            bc_list1: List[str],
-            bc_list2: List[str],
+            bc_list1: Iterable[str],
+            bc_list2: Iterable[str],
             omic_layer: str,
             variable: str,
             cell_type: str,

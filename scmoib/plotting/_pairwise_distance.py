@@ -7,7 +7,7 @@ def pairwise_distance(
         adata: AnnData,
         cell_type: str,
         metric: str = 'euclidean',
-        title: Optional[Union[str, None]] = None,
+        title: Union[str, None] = None,
         rotation: Optional[float] = 90,
         save: Union[str, None] = None
 ) -> None:

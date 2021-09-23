@@ -1,17 +1,17 @@
 from sklearn.metrics import accuracy_score
 from anndata import AnnData
-from typing import List, Dict
+from typing import Dict, Iterable
 
 
 def accuracy_paired_omics_per_cell_type(
         adata: AnnData,
-        bc_list1: List[str],
-        bc_list2: List[str],
+        bc_list1: Iterable[str],
+        bc_list2: Iterable[str],
         omic_layer: str,
         variable: str,
         cell_type: str,
         percent: bool = False
-) -> Dict[float]:
+) -> Dict[str, float]:
     """
     will match cell barcode from paired measurement for 2 layers. 
     I will return the dict of ratio of cells for which the RNA and ATAC barcode end up in the same cluster.
