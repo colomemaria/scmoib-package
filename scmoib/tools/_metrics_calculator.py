@@ -1,6 +1,6 @@
 import pandas as pd
 from . import metrics
-from typing import Union, Iterable
+from typing import Union, Iterable, Dict
 from anndata import AnnData
 
 
@@ -19,10 +19,25 @@ class MetricsCalculator:
         if key not in self.metrics.keys():
             self.metrics[key] = {}
 
-    def get_df(self):
+    def get_df(
+            self,
+            filter_values: Union[Dict[str, Iterable[str]], None] = None
+    ) -> pd.DataFrame:
         """
         Return metrics information as DataFrame.
+
+        Parameters
+        ----------
+        filter_values
+            Dictionary of lists containing non-appropriate metrics for different data integration methods.
+            If None returns raw metrics dataframe.
         """
+        if filter_values:
+            temp_metrics = self.metrics.copy()
+            for key in filter_values.keys():
+                for val in filter_values[key]:
+                    temp_metrics[key][val] = float('nan')
+            return pd.DataFrame(temp_metrics).transpose()
         return pd.DataFrame(self.metrics).transpose()
 
     def node_metrics(

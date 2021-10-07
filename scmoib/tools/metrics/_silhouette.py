@@ -118,7 +118,6 @@ def __silhouette_batch(adata, batch_key, group_key, metric='euclidean',
         group means: if `mean=True`
     """
     if embed not in adata.obsm.keys():
-        print(adata.obsm.keys())
         raise KeyError(f'{embed} not in obsm')
 
     sil_all = pd.DataFrame(columns=['group', 'silhouette_score'])
@@ -245,7 +244,7 @@ def silhouette(
         batch_key: str = 'orig.ident',
         cell_label: str = 'paper.cell.type',
         embed: str = 'X_pca'
-) -> Tuple[float, float, float, float]:
+):
     """
 
     Parameters
