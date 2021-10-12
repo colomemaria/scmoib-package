@@ -4,7 +4,7 @@ if sys.version_info < (3,):
 
 from setuptools import setup, find_packages
 from pathlib import Path
-from . import versioneer
+import .versioneer
 
 try:
     from scmoib import __author__, __email__
