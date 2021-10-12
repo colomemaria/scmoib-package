@@ -1,10 +1,10 @@
 import sys, os
-import versioneer
 if sys.version_info < (3,):
     sys.exit('scmoib requires Python >= 3.6')
 
 from setuptools import setup, find_packages
 from pathlib import Path
+from . import versioneer
 
 try:
     from scmoib import __author__, __email__
