@@ -230,6 +230,8 @@ def __score_isolated_label(adata, label_key, cluster_key, label, cluster=True, v
     else:
         adata_tmp.obs['group'] = adata_tmp.obs[label_key] == label
         score = __silhouette(adata_tmp, group_key='group', **kwargs)
+        # testing new boundaries
+        score = (score + 1) / 2
 
     del adata_tmp
 
@@ -279,4 +281,5 @@ def silhouette(
     il_score_clus = __isolated_labels(adata, label_key=cell_label, batch_key=batch_key,
                                       cluster=True, n=1, verbose=False)
 
-    return sil_global, sil_clus, il_score_clus, il_score_sil
+    # return sil_global, sil_clus, il_score_clus, il_score_sil
+    return (sil_global + 1) / 2, (sil_clus + 1) / 2, il_score_clus, il_score_sil

@@ -2,6 +2,8 @@ import pandas as pd
 from . import metrics
 from typing import Union, Iterable, Dict
 from anndata import AnnData
+import scanpy as sc
+import numpy as np
 
 
 class MetricsCalculator:
@@ -18,6 +20,29 @@ class MetricsCalculator:
         """
         if key not in self.metrics.keys():
             self.metrics[key] = {}
+
+    @staticmethod
+    def check_anndata(adata):
+        if 'connectivities' not in adata.obsp:
+            print("Computing a neighborhood graph")
+            if 'X_iNMF' in adata.obsm.keys():
+                sc.pp.neighbors(adata, use_rep='X_iNMF')
+            elif 'X_pca' in adata.obsm.keys():
+                sc.pp.neighbors(adata, use_rep='X_pca')
+            else:
+                sc.pp.neighbors(adata, use_rep='X_umap')
+        else:
+            print("Everything ok with neighborhood graph")
+
+        if 'louvain' not in adata.obs.columns:
+            print("Running louvain clustering")
+            sc.tl.louvain(adata)
+        elif np.isnan(adata.obs.louvain).any():
+            print("Running louvain clustering")
+            sc.tl.louvain(adata)
+        else:
+            print("Everything is ok with louvain cluster labels")
+        print("All pre-flight checks done")
 
     def get_df(
             self,

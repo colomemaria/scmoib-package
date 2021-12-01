@@ -10,7 +10,7 @@ def __get_pairs(adata, bc_list1, bc_list2):
     return pairs
 
 
-def __distance_between_matching_barcodes(adata, bc_list1, bc_list2, metric='euclidean', absolute=True):
+def __distance_between_matching_barcodes(adata, bc_list1, bc_list2, metric='cosine', absolute=True):
     distances = pairwise_distances(adata.X, metric=metric)
     distances_mean = distances.mean(axis=0)
     pairs = __get_pairs(adata, bc_list1, bc_list2)
@@ -31,7 +31,7 @@ def average_distance_between_matching_barcodes(
         adata: AnnData,
         bc_list1: Iterable[str],
         bc_list2: Iterable[str],
-        metric: str = 'euclidean',
+        metric: str = 'cosine',
         cell_type: Union[str, None] = None,
         absolute: bool = True
 ) -> Union[float, Dict[str, float]]:
