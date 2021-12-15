@@ -4,6 +4,7 @@ from typing import Union, Iterable, Dict
 from anndata import AnnData
 import scanpy as sc
 import numpy as np
+import episcanpy as epi
 
 
 class MetricsCalculator:
@@ -23,6 +24,9 @@ class MetricsCalculator:
 
     @staticmethod
     def check_anndata(adata):
+        if not adata.obsp:
+            epi.pp.lazy(adata)
+        
         if 'connectivities' not in adata.obsp:
             print("Computing a neighborhood graph")
             if 'X_iNMF' in adata.obsm.keys():
@@ -34,14 +38,9 @@ class MetricsCalculator:
         else:
             print("Everything ok with neighborhood graph")
 
-        if 'louvain' not in adata.obs.columns:
-            print("Running louvain clustering")
-            sc.tl.louvain(adata)
-        elif np.isnan(adata.obs.louvain).any():
-            print("Running louvain clustering")
-            sc.tl.louvain(adata)
-        else:
-            print("Everything is ok with louvain cluster labels")
+        
+        sc.tl.louvain(adata)
+        print("Running louvain clustering")
         print("All pre-flight checks done")
 
     def get_df(
@@ -95,9 +94,7 @@ class MetricsCalculator:
         self.__check_key(adata_id)
 
         res = metrics.node_metrics(adata, bc_list1, bc_list2, cell_type, n_jobs=n_jobs)
-        self.metrics[adata_id]['num_inf'] = res[0]
-        self.metrics[adata_id]['mean_nodes'] = res[1]
-        self.metrics[adata_id]['disc_ratio'] = res[2]
+        self.metrics[adata_id]['conn_ratio'] = res[2]
 
     def silhouette(
             self,
@@ -242,7 +239,7 @@ class MetricsCalculator:
             adata_id: str,
             bc_list1: Iterable[str],
             bc_list2: Iterable[str],
-            metric: str = 'euclidean',
+            metric: str = 'cosine',
             cell_type: str = None,
             absolute: bool = True
     ) -> None:
@@ -271,12 +268,12 @@ class MetricsCalculator:
                                                                     cell_type=cell_type,
                                                                     absolute=absolute)
 
-        if isinstance(result, float):
+        if isinstance(result, dict):
+            adata.uns['average_dist_per_cluster'] = result
+        else:
             self.__check_key(adata_id)
             self.metrics[adata_id]['pairwise_distance'] = result
-        elif isinstance(result, dict):
-            adata.uns['average_dist_per_cluster'] = result
-
+            
     def _accuracy_paired_omics(
             self,
             adata: AnnData,

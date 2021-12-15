@@ -31,7 +31,6 @@ def metrics_scatterplot(
     temp_df.rename(columns={'level_0': 'method', 'level_1': 'metric', 0: 'value'}, inplace=True)
     temp_df.method, temp_df.metric = temp_df.method.astype('category'), temp_df.metric.astype('category')
     fig, ax = plt.subplots(figsize=figsize)
-    print(temp_df)
     metrics = list(set(temp_df.metric))
     palette = sns.color_palette(n_colors=len(metrics))
     colors_list = []
@@ -50,6 +49,7 @@ def metrics_scatterplot(
     )
     ax.set_title(title)
     ax.grid(False)
-
+    ax.set_xticklabels(temp_df.metric, rotation=-90)
+    
     if save:
         fig.savefig(save)
