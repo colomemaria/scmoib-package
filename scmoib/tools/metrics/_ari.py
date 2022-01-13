@@ -5,9 +5,7 @@
 # M. Dugas, M. Colome ́-Tatche ́, and F. J. Theis. Benchmarking atlas-level data integration in single-cell genomics.
 # bioRxiv, page 2020.05.22.111161, May 2020. doi: 10.1101/2020.05.22.111161.
 
-from .utils.utils import checkAdata, checkBatch
-import sklearn
-import pandas as pd
+import scib
 from anndata import AnnData
 
 
@@ -28,21 +26,4 @@ def ari(adata: AnnData, group1: object, group2: object) -> float:
     The ARI score
     """
 
-    checkAdata(adata)
-
-    if isinstance(group1, str):
-        checkBatch(group1, adata.obs)
-        group1 = adata.obs[group1].tolist()
-    elif isinstance(group1, pd.Series):
-        group1 = group1.tolist()
-
-    if isinstance(group2, str):
-        checkBatch(group2, adata.obs)
-        group2 = adata.obs[group2].tolist()
-    elif isinstance(group2, pd.Series):
-        group2 = group2.tolist()
-
-    if len(group1) != len(group2):
-        raise ValueError(f'different lengths in group1 ({len(group1)}) and group2 ({len(group2)})')
-
-    return sklearn.metrics.cluster.adjusted_rand_score(group1, group2)
+    return scib.metrics.ari(adata, group1, group2)
