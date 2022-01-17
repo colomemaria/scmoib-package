@@ -23,25 +23,31 @@ class MetricsCalculator:
             self.metrics[key] = {}
 
     @staticmethod
-    def check_anndata(adata):
-        if not adata.obsp:
+    def check_anndata(adata, cell_label, mode):
+        '''
+        ['raw', 'count', 'comps', 'graph']
+        wether the method is modifying the count matrix --> then do PCs, graph and UMAP
+        wether it change the components (so LIGER) --> then do the teh graph on these and UMAP
+        wehter it changes the graph --> then do UMAP
+        check the cell bales and barcodes are present
+        generate louvain cluster on the newlyy obtained graph using epi.tl.getNclusters --> using the number of cell labels as a 
+            target number of louvain clusters
+        '''
+        print('Running pre-flight check')
+        if mode not in ['raw', 'count', 'comps', 'graph']:
+            raise Exception('Functions works only in 4 modes: raw, count, comps, graph')
+        
+        if mode == 'raw' or mode == 'count':
             epi.pp.lazy(adata)
-        
-        if 'connectivities' not in adata.obsp:
-            print("Computing a neighborhood graph")
-            if 'X_iNMF' in adata.obsm.keys():
-                sc.pp.neighbors(adata, use_rep='X_iNMF')
-            elif 'X_pca' in adata.obsm.keys():
-                sc.pp.neighbors(adata, use_rep='X_pca')
-            else:
-                sc.pp.neighbors(adata, use_rep='X_umap')
-        else:
-            print("Everything ok with neighborhood graph")
-
-        
-        sc.tl.louvain(adata)
-        print("Running louvain clustering")
-        print("All pre-flight checks done")
+            
+        if mode == 'comps':
+            epi.pp.neighbors(adata)
+            epi.tl.umap(adata)
+            
+        if mode == 'graph':
+            epi.tl.umap(adata)
+        print('Clustering...')
+        epi.tl.getNClusters(adata, adata.obs[cell_label].unique().shape[0])
 
     def get_df(
             self,
@@ -96,6 +102,22 @@ class MetricsCalculator:
         res = metrics.node_metrics(adata, bc_list1, bc_list2, cell_type, n_jobs=n_jobs)
         self.metrics[adata_id]['conn_ratio'] = res[2]
 
+    def spec_dist(
+        self,
+        adata: AnnData,
+        adata_id: str,
+        n_metr: int = 10,
+        norm: bool = True
+    ) -> float:
+        """
+        Calculate our special distance based on the shortest path statistics.
+        This metric is normalized by the ratio of connected barcodes.
+        """
+        
+        self.__check_key(adata_id)
+        res = metrics.spec_dist(adata, n_metr=n_metr, norm=norm)
+        self.metrics[adata_id][f'spec_dist_{n_metr}'] = res
+    
     def silhouette(
             self,
             adata: AnnData,

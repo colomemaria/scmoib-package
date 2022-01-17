@@ -8,3 +8,4 @@ from ._average_distance_between_matching_barcodes import average_distance_betwee
 from ._accuracy_paired_omics import accuracy_paired_omics
 from ._accuracy_paired_omics_per_cell_type import accuracy_paired_omics_per_cell_type
 from ._graph_connectivity import graph_connectivity
+from ._spec_dist import spec_dist

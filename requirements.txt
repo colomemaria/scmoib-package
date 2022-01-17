@@ -13,3 +13,6 @@ episcanpy==0.3.1
 plotly==5.1.0
 anndata==0.7.6
 scikit_learn==0.24.2
+MulticoreTSNE
+louvain
+python-igraph
