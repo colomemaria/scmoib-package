@@ -115,7 +115,7 @@ class MetricsCalculator:
         """
         
         self.__check_key(adata_id)
-        res = metrics.spec_dist(adata, n_metr=n_metrm, norm=norm)
+        res = metrics.spec_dist(adata, n_metr=n_metr, norm=norm)
         self.metrics[adata_id][f'spec_dist_{n_metr}']
     
     def silhouette(
