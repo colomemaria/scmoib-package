@@ -1,6 +1,6 @@
-from scipy.special import ndtr
 from scipy.stats import gaussian_kde
 from anndata import AnnData
+import numpy as np
 
 def spec_dist(
         adata: AnnData, 
@@ -14,11 +14,12 @@ def spec_dist(
     try:
         data = adata.uns['metrics']
         kde = gaussian_kde(data['nodes_count'])
-        cdf = tuple(ndtr(np.ravel(item - kde.dataset) / kde.factor).mean() for item in np.unique(data))
+        res = kde.integrate_box_1d(low=-np.inf, high=n_metr)
         if norm:
-            return cdf[min(n_metr, len(cdf) - 1)] * data['conn_ratio'] 
-        return cdf[min(n_metr, len(cdf) - 1)]
+            return res * data['conn_ratio'] 
+        return res
     except KeyError:
         print("Shortest path statistics is not available. \n",
               "Please, check if you ran the nodes_metrics method or used unintegrated data")
-        return
+    except ValueError:
+        return None

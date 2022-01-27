@@ -10,9 +10,6 @@ seaborn
 plotly
 anndata
 scikit_learn
-MulticoreTSNE
-python-igraph
-louvain
 scib
 episcanpy
 numpy

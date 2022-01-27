@@ -34,7 +34,7 @@ setup(
         "Operating System :: OS Independent",
     ],
     packages=find_packages(),
-    python_requires=">=3.6",
+    python_requires="==3.7",
     install_requires=[
         l.strip() for l in
         Path('requirements.txt').read_text('utf-8').splitlines()

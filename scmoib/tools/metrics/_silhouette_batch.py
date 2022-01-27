@@ -32,4 +32,4 @@ def silhouette_batch(
     -------
     Average width slhouette score
     """
-    return scib_sil_batch(adata, batch_key, cell_label, embed, metric, scale=scale)
+    return scib_sil_batch(adata, batch_key, cell_label, embed, metric, scale=scale, return_all=False, verbose=False)

@@ -7,6 +7,7 @@ def isolated_labels_score(
         cell_label: str,
         batch_key: str,
         embed: str,
+        verbose: bool = False
 ):
     """
     Score how well labels of isolated labels are distiguished in the dataset by either
@@ -31,14 +32,16 @@ def isolated_labels_score(
                                    label_key=cell_label, 
                                    batch_key=batch_key, 
                                    embed=embed,
-                                   cluster=False, 
-                                   verbose=False)
+                                   cluster=False,
+                                   iso_threshold=1,
+                                   verbose=verbose)
     
     il_score_clus = isolated_labels(adata, 
                                     label_key=cell_label, 
                                     batch_key=batch_key, 
                                     embed=embed,
-                                    cluster=True, 
-                                    verbose=False)
+                                    cluster=True,
+                                    iso_threshold=1,
+                                    verbose=verbose)
     
     return il_score_sil, il_score_clus

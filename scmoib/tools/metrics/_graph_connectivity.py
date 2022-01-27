@@ -16,5 +16,5 @@ def graph_connectivity(adata: AnnData, label_key: str) -> float:
     -------
     Mean graph connectivity score.
     """
-    
+    adata.obs[label_key] = adata.obs[label_key].astype('category')
     return scib_gr_conn(adata, label_key)
