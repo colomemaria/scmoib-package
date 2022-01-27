@@ -4,7 +4,7 @@ if sys.version_info < (3,):
 
 from setuptools import setup, find_packages
 from pathlib import Path
-import .versioneer
+from .versioneer import get_version, get_cmdclass
 try:
     from scmoib import __author__, __email__
 except ImportError:  # Deps not yet installed
@@ -15,8 +15,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="scmoib",
-    version=versioneer.get_version(),
-    cmdclass=versioneer.get_cmdclass(),
+    version=get_version(),
+    cmdclass=get_cmdclass(),
     author=__author__,
     author_email=__email__,
     license='MIT',
