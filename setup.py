@@ -4,7 +4,7 @@ if sys.version_info < (3,):
 
 from setuptools import setup, find_packages
 from pathlib import Path
-from ..versioneer import get_version, get_cmdclass
+from versioneer import get_version, get_cmdclass
 try:
     from scmoib import __author__, __email__
 except ImportError:  # Deps not yet installed
