@@ -1,4 +1,4 @@
-import versioneer
+from . import versioneer
 import sys, os
 if sys.version_info < (3,):
     sys.exit('scmoib requires Python >= 3.6')
