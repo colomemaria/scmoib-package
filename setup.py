@@ -1,9 +1,9 @@
+import versioneer
 import sys, os
 if sys.version_info < (3,):
     sys.exit('scmoib requires Python >= 3.6')
 
 from setuptools import setup, find_packages
-import versioneer
 from pathlib import Path
 
 try:
