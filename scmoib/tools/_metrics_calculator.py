@@ -195,7 +195,9 @@ class MetricsCalculator:
         self.metrics[adata_id]['sil_clus'] = res
     
     def isolated_labels_score(
+            self,
             adata: AnnData,
+            adata_id: str,
             cell_label: str,
             batch_key: str,
             embed: str,
