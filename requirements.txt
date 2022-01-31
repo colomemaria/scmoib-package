@@ -1,3 +1,4 @@
+pythoon=3.7
 pandas
 packaging
 cycler
