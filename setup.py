@@ -2064,12 +2064,17 @@ if __name__ == "__main__":
         if errors:
             sys.exit(1)
 
+##################################################
+
+##################################################
+
+##################################################
+
 import sys, os
 if sys.version_info < (3,):
     sys.exit('scmoib requires Python == 3.7')
 
 from setuptools import setup, find_packages
-import versioneer
 from pathlib import Path
 
 try:
