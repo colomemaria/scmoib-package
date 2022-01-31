@@ -1,4 +1,4 @@
-pythoon=3.7
+python==3.7
 pandas
 packaging
 cycler
