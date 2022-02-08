@@ -3,7 +3,8 @@ packaging
 cycler
 typing_extensions
 networkx
-scanpy==1.7.2
+scanpy==1.8.2
+episcanpy
 scipy
 matplotlib
 seaborn
@@ -11,5 +12,4 @@ plotly
 anndata
 scikit_learn
 scib
-episcanpy
 numpy
