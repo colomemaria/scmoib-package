@@ -8,7 +8,7 @@ def silhouette(
         batch_key: str,
         embed: str = 'X_pca',
         metric: str = 'euclidean',
-        scale: str = True
+        scale: bool = True
 ):
     """
     

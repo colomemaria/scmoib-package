@@ -23,7 +23,7 @@ class MetricsCalculator:
             self.metrics[key] = {}
 
     @staticmethod
-    def check_anndata(adata, cell_label, mode):
+    def check_anndata(adata, cell_label, mode, use_rep=None):
         '''
         ['raw', 'count', 'comps', 'graph']
         wether the method is modifying the count matrix --> then do PCs, graph and UMAP
@@ -41,7 +41,7 @@ class MetricsCalculator:
             epi.pp.lazy(adata)
             
         if mode == 'comps':
-            epi.pp.neighbors(adata)
+            epi.pp.neighbors(adata, use_rep=use_rep)
             epi.tl.umap(adata)
             
         if mode == 'graph':
@@ -125,7 +125,7 @@ class MetricsCalculator:
             batch_key: str,
             embed: str = 'X_pca',
             metric: str = 'euclidean',
-            scale: str = True
+            scale: bool = True
     ) -> None:
         """
         Calculate silhouette score.
