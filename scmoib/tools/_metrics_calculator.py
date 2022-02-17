@@ -22,33 +22,6 @@ class MetricsCalculator:
         if key not in self.metrics.keys():
             self.metrics[key] = {}
 
-    @staticmethod
-    def check_anndata(adata, cell_label, mode, use_rep=None):
-        '''
-        ['raw', 'count', 'comps', 'graph']
-        wether the method is modifying the count matrix --> then do PCs, graph and UMAP
-        wether it change the components (so LIGER) --> then do the teh graph on these and UMAP
-        wehter it changes the graph --> then do UMAP
-        check the cell bales and barcodes are present
-        generate louvain cluster on the newlyy obtained graph using epi.tl.getNclusters --> using the number of cell labels as a 
-            target number of louvain clusters
-        '''
-        print('Running pre-flight check')
-        if mode not in ['raw', 'count', 'comps', 'graph']:
-            raise Exception('Functions works only in 4 modes: raw, count, comps, graph')
-        
-        if mode == 'raw' or mode == 'count':
-            epi.pp.lazy(adata)
-            
-        if mode == 'comps':
-            epi.pp.neighbors(adata, use_rep=use_rep)
-            epi.tl.umap(adata)
-            
-        if mode == 'graph':
-            epi.tl.umap(adata)
-        print('Clustering...')
-        epi.tl.getNClusters(adata, adata.obs[cell_label].unique().shape[0])
-
     def get_df(
             self,
             filter_values: Union[Dict[str, Iterable[str]], None] = None
@@ -153,8 +126,7 @@ class MetricsCalculator:
                                  scale=scale)
 
         self.metrics[adata_id]['sil_global'] = res
-        
-        
+
     def silhouette_batch(
             self,
             adata: AnnData,
@@ -172,6 +144,8 @@ class MetricsCalculator:
         ----------
         adata
             Annotated data matrix
+        adata_id
+            Key for metrics dataframe
         batch_key
             Obs variable containing batch annotation
         cell_label
@@ -210,6 +184,8 @@ class MetricsCalculator:
         ----------
         adata
             Annotated data matrix
+        adata_id
+            Key for metrics dataframe
         batch_key
             Obs variable containing batch annotation
         cell_label
@@ -227,8 +203,7 @@ class MetricsCalculator:
         self.__check_key(adata_id)
         self.metrics[adata_id]['il_sil'] = res[0]
         self.metrics[adata_id]['il_clus'] = res[1]
-    
-    
+
     def ari(
             self,
             adata: AnnData,
