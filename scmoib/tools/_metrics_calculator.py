@@ -1,7 +1,10 @@
 import pandas as pd
 from . import metrics
-from typing import Union, Iterable
+from typing import Union, Iterable, Dict
 from anndata import AnnData
+import scanpy as sc
+import numpy as np
+import episcanpy as epi
 
 
 class MetricsCalculator:
@@ -19,10 +22,25 @@ class MetricsCalculator:
         if key not in self.metrics.keys():
             self.metrics[key] = {}
 
-    def get_df(self):
+    def get_df(
+            self,
+            filter_values: Union[Dict[str, Iterable[str]], None] = None
+    ) -> pd.DataFrame:
         """
         Return metrics information as DataFrame.
+
+        Parameters
+        ----------
+        filter_values
+            Dictionary of lists containing non-appropriate metrics for different data integration methods.
+            If None returns raw metrics dataframe.
         """
+        if filter_values:
+            temp_metrics = self.metrics.copy()
+            for key in filter_values.keys():
+                for val in filter_values[key]:
+                    temp_metrics[key][val] = float('nan')
+            return pd.DataFrame(temp_metrics).transpose()
         return pd.DataFrame(self.metrics).transpose()
 
     def node_metrics(
@@ -55,10 +73,24 @@ class MetricsCalculator:
         self.__check_key(adata_id)
 
         res = metrics.node_metrics(adata, bc_list1, bc_list2, cell_type, n_jobs=n_jobs)
-        self.metrics[adata_id]['num_inf'] = res[0]
-        self.metrics[adata_id]['mean_nodes'] = res[1]
-        self.metrics[adata_id]['disc_ratio'] = res[2]
+        self.metrics[adata_id]['conn_ratio'] = res[2]
 
+    def spec_dist(
+        self,
+        adata: AnnData,
+        adata_id: str,
+        n_metr: int = 10,
+        norm: bool = True
+    ) -> float:
+        """
+        Calculate our special distance based on the shortest path statistics.
+        This metric is normalized by the ratio of connected barcodes.
+        """
+        
+        self.__check_key(adata_id)
+        res = metrics.spec_dist(adata, n_metr=n_metr, norm=norm)
+        self.metrics[adata_id][f'spec_dist_{n_metr}'] = res
+    
     def silhouette(
             self,
             adata: AnnData,
@@ -202,7 +234,7 @@ class MetricsCalculator:
             adata_id: str,
             bc_list1: Iterable[str],
             bc_list2: Iterable[str],
-            metric: str = 'euclidean',
+            metric: str = 'cosine',
             cell_type: str = None,
             absolute: bool = True
     ) -> None:
@@ -231,12 +263,12 @@ class MetricsCalculator:
                                                                     cell_type=cell_type,
                                                                     absolute=absolute)
 
-        if isinstance(result, float):
+        if isinstance(result, dict):
+            adata.uns['average_dist_per_cluster'] = result
+        else:
             self.__check_key(adata_id)
             self.metrics[adata_id]['pairwise_distance'] = result
-        elif isinstance(result, dict):
-            adata.uns['average_dist_per_cluster'] = result
-
+            
     def _accuracy_paired_omics(
             self,
             adata: AnnData,

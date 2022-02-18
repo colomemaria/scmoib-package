@@ -40,7 +40,7 @@ def node_metrics(
     tmp_res = list(zip(*results))
     dists = np.array(tmp_res[0])
     num_inf = 2 * np.where(dists == float('inf'))[0].shape[0]
-    disc_ratio = num_inf / len(adata.obs.index)
+    conn_ratio = 1 - num_inf / len(adata.obs.index)
     paths = list(np.array(tmp_res[1], dtype=object)[np.where(dists != float('inf'))])
 
     if num_inf == dists.shape[0]:
@@ -59,7 +59,7 @@ def node_metrics(
         cell_type_dist[i] = np.mean(cell_type_dist[i])
 
     metrics = {'num_inf': num_inf, 'mean_nodes': mean_nodes, 'dists': dists, 'nodes_count': nodes_count,
-               'mean_nodes_per_cell_type': cell_type_dist, 'disc_ratio': disc_ratio}
+               'mean_nodes_per_cell_type': cell_type_dist, 'conn_ratio': conn_ratio}
     adata.uns['metrics'] = metrics
 
-    return num_inf, mean_nodes, disc_ratio
+    return num_inf, mean_nodes, conn_ratio
