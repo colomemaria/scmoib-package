@@ -1,10 +1,10 @@
 pandas
-packaging
+
 cycler
 typing_extensions
 networkx
 scanpy==1.8.2
-episcanpy
+
 scipy
 matplotlib
 seaborn
