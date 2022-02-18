@@ -1,2 +1,2 @@
-from subsampler import Subsampler
-from check_anndata import check_anndata
+from .subsampler import Subsampler
+from .check_anndata import check_anndata

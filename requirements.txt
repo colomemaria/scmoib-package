@@ -4,13 +4,13 @@ cycler
 typing_extensions
 networkx
 memory_profiler
-scanpy==1.7.2
+scanpy
 scipy
 matplotlib
 seaborn
-numpy
 episcanpy
 plotly
 anndata
 scikit_learn
+numpy<1.22
 
