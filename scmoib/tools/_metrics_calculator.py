@@ -125,7 +125,19 @@ class MetricsCalculator:
         self.metrics[adata_id]['sil_clus'] = sc2
         self.metrics[adata_id]['il_score_clus'] = sc3
         self.metrics[adata_id]['il_score_sil'] = sc4
-
+    
+    def silhouette_batch(
+        adata,
+        batch_key,
+        group_key,
+        embed,
+        metric='euclidean',
+        return_all=False,
+        scale=True,
+        verbose=True
+    ):
+        pass
+    
     def ari(
             self,
             adata: AnnData,
