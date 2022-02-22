@@ -76,28 +76,28 @@ class MetricsCalculator:
         self.metrics[adata_id]['conn_ratio'] = res[2]
 
     def spec_dist(
-        self,
-        adata: AnnData,
-        adata_id: str,
-        n_metr: int = 10,
-        norm: bool = True
+            self,
+            adata: AnnData,
+            adata_id: str,
+            n_metr: int = 10,
+            norm: bool = True
     ) -> float:
         """
         Calculate our special distance based on the shortest path statistics.
         This metric is normalized by the ratio of connected barcodes.
         """
-        
+
         self.__check_key(adata_id)
         res = metrics.spec_dist(adata, n_metr=n_metr, norm=norm)
         self.metrics[adata_id][f'spec_dist_{n_metr}'] = res
-    
+
     def silhouette(
             self,
             adata: AnnData,
             adata_id: str,
-            batch_key: str,
             cell_label: str,
-            embed: str = 'X_pca'
+            embed: str,
+            metric: str = 'euclidean'
     ) -> None:
         """
         Calculate silhouette metrics.
@@ -108,36 +108,91 @@ class MetricsCalculator:
             Annotated data matrix.
         adata_id
             Data ID for metrics dataframe.
-        batch_key
-            obs variable containing batch information.
         cell_label
             obs variable containing cell type information.
         embed
             obsm variable name.
+        metric
+            Metric type
         """
         self.__check_key(adata_id)
-        sc1, sc2, sc3, sc4 = metrics.silhouette(adata,
-                                                batch_key=batch_key,
-                                                cell_label=cell_label,
-                                                embed=embed)
+        self.metrics[adata_id]['sil_global'] = metrics.silhouette(adata,
+                                                                  cell_label,
+                                                                  embed,
+                                                                  metric=metric)
 
-        self.metrics[adata_id]['sil_global'] = sc1
-        self.metrics[adata_id]['sil_clus'] = sc2
-        self.metrics[adata_id]['il_score_clus'] = sc3
-        self.metrics[adata_id]['il_score_sil'] = sc4
-    
     def silhouette_batch(
-        adata,
-        batch_key,
-        group_key,
-        embed,
-        metric='euclidean',
-        return_all=False,
-        scale=True,
-        verbose=True
-    ):
-        pass
-    
+            self,
+            adata: AnnData,
+            adata_id: str,
+            batch_key: str,
+            group_key: str,
+            embed: object,
+            metric: str = 'euclidean',
+    ) -> None:
+        """
+            Calculate silhouette metrics.
+
+            Parameters
+            ----------
+            adata
+                Annotated data matrix.
+            adata_id
+                Data ID for metrics dataframe.
+            batch_key
+                obs variable containing batch information.
+            group_key
+                obs variable containing cell type information.
+            embed
+                obsm variable name
+            metric
+                Metric type.
+        """
+        self.__check_key(adata_id)
+        self.metrics[adata_id]['sil_clus'] = metrics.silhouette_batch(adata,
+                                                                      batch_key,
+                                                                      group_key,
+                                                                      embed,
+                                                                      metric=metric)
+
+    def isolated_labels(
+            self,
+            adata: AnnData,
+            adata_id: str,
+            batch_key: str,
+            group_key: str,
+            embed: str,
+    ) -> None:
+        """
+            Calculate silhouette metrics.
+
+            Parameters
+            ----------
+            adata
+                Annotated data matrix.
+            adata_id
+                Data ID for metrics dataframe.
+            batch_key
+                obs variable containing batch information.
+            group_key
+                obs variable containing cell type information.
+            embed
+                obsm variable name
+        """
+        self.__check_key(adata_id)
+        self.metrics[adata_id]['il_sil'] = metrics.isolated_labels(adata,
+                                                                   group_key,
+                                                                   batch_key,
+                                                                   embed=embed,
+                                                                   iso_threshold=1,
+                                                                   cluster=False)
+        self.metrics[adata_id]['il_clus'] = metrics.isolated_labels(adata,
+                                                                    group_key,
+                                                                    batch_key,
+                                                                    embed=embed,
+                                                                    iso_threshold=1,
+                                                                    cluster=True)
+
     def ari(
             self,
             adata: AnnData,
@@ -280,7 +335,7 @@ class MetricsCalculator:
         else:
             self.__check_key(adata_id)
             self.metrics[adata_id]['pairwise_distance'] = result
-            
+
     def _accuracy_paired_omics(
             self,
             adata: AnnData,

@@ -1,18 +1,28 @@
+# This original version of this code was written for the scIB project
+# For more information see: https://github.com/theislab/scib
+# Paper to cite for this code : https://www.biorxiv.org/content/10.1101/2020.05.22.111161v2
+# M. D. Luecken, M. Bu ̈ttner, K. Chaichoompu, A. Danese, M. Interlandi, M. F. Mueller, D. C. Strobl, L. Zappia,
+# M. Dugas, M. Colome ́-Tatche ́, and F. J. Theis. Benchmarking atlas-level data integration in single-cell genomics.
+# https://www.nature.com/articles/s41592-021-01336-8
+
 import pandas as pd
 from sklearn.metrics import f1_score
-from .silhouette import silhouette
+from ._silhouette import silhouette
 from anndata import AnnData
+from typing import Union
+from ._nmi import nmi
+import scanpy as sc
 
 
 def isolated_labels(
-        adata,
-        label_key,
-        batch_key,
-        embed,
-        cluster=True,
-        iso_threshold=None,
-        return_all=False,
-        verbose=True
+        adata: AnnData,
+        label_key: str,
+        batch_key: str,
+        embed: str,
+        cluster: bool = True,
+        iso_threshold: Union[None, int] = None,
+        return_all: bool = False,
+        verbose: bool = False
 ):
     """
     Score how well labels of isolated labels are distiguished in the dataset by either
@@ -32,6 +42,29 @@ def isolated_labels(
     :return:
         Mean of scores for each isolated label
         or dictionary of scores for each label if `return_all=True`
+
+    Parameters
+    ----------
+    adata
+        Annotated data matrix.
+    label_key
+        obs variable containing cell type information.
+    batch_key
+        obs variable containing batch information.
+    embed
+        obsm variable name.
+    cluster
+        if True, use clustering approach, otherwise use silhouette score approach
+    iso_threshold
+        Max number of batches per label for label to be considered as isolated, if iso_threshold is integer.
+        If iso_threshold=None, consider minimum number of batches that labels are present in data.
+    return_all
+        Return scores for all isolated labels instead of aggregated mean.
+    verbose
+
+    Returns
+    -------
+    Aggregated mean isolated score or score for all isolated labels
     """
     scores = {}
     isolated_labels = get_isolated_labels(
@@ -103,7 +136,7 @@ def score_isolated_label(
 
     if cluster:
         # F1-score on clustering
-        opt_louvain(
+        __opt_louvain(
             adata_tmp,
             label_key,
             cluster_key=iso_label_key,
@@ -156,7 +189,7 @@ def get_isolated_labels(adata, label_key, batch_key, iso_threshold, verbose):
 
 def __opt_louvain(adata, label_key, cluster_key, function=None, resolutions=None,
                   use_rep=None,
-                  inplace=True, force=True, verbose=True, **kwargs):
+                  inplace=True, force=True, verbose=False, **kwargs):
     """
     params:
         label_key: name of column in adata.obs containing biological labels to be

@@ -3,7 +3,7 @@
 # Paper to cite for this code : https://www.biorxiv.org/content/10.1101/2020.05.22.111161v2
 # M. D. Luecken, M. Bu ̈ttner, K. Chaichoompu, A. Danese, M. Interlandi, M. F. Mueller, D. C. Strobl, L. Zappia,
 # M. Dugas, M. Colome ́-Tatche ́, and F. J. Theis. Benchmarking atlas-level data integration in single-cell genomics.
-# bioRxiv, page 2020.05.22.111161, May 2020. doi: 10.1101/2020.05.22.111161.
+# https://www.nature.com/articles/s41592-021-01336-8
 
 import numpy as np
 import pandas as pd
@@ -36,6 +36,6 @@ def graph_connectivity(adata: AnnData, label_key: str) -> float:
         adata_sub = adata[adata.obs[label_key].isin([ct]), ]
         _, labs = connected_components(adata_sub.obsp['connectivities'], connection='strong')
         tab = pd.value_counts(labs)
-        clust_res.append(tab[0] / sum(tab))
+        clust_res.append(tab.max() / sum(tab))
 
     return np.mean(clust_res)

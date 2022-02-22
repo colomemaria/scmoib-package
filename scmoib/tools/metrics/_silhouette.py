@@ -3,34 +3,42 @@
 # Paper to cite for this code : https://www.biorxiv.org/content/10.1101/2020.05.22.111161v2
 # M. D. Luecken, M. Bu ̈ttner, K. Chaichoompu, A. Danese, M. Interlandi, M. F. Mueller, D. C. Strobl, L. Zappia,
 # M. Dugas, M. Colome ́-Tatche ́, and F. J. Theis. Benchmarking atlas-level data integration in single-cell genomics.
-# bioRxiv, page 2020.05.22.111161, May 2020. doi: 10.1101/2020.05.22.111161.
+# https://www.nature.com/articles/s41592-021-01336-8
 
-import sklearn
 import pandas as pd
-import numpy as np
-import scanpy as sc
-from ._nmi import nmi
 from anndata import AnnData
-from typing import Tuple
 from sklearn.metrics.cluster import silhouette_samples, silhouette_score
 
 
 def silhouette(
-        adata,
-        group_key,
-        embed,
-        metric='euclidean',
-        scale=True
-):
+        adata: AnnData,
+        group_key: str,
+        embed: str,
+        metric: str = 'euclidean',
+        scale: bool = True
+) -> float:
     """
     Wrapper for sklearn silhouette function values range from [-1, 1] with
         1 being an ideal fit
         0 indicating overlapping clusters and
         -1 indicating misclassified cells
-    By default, the score is scaled between 0 and 1. This is controlled `scale=True`
-    :param group_key: key in adata.obs of cell labels
-    :param embed: embedding key in adata.obsm, default: 'X_pca'
-    :param scale: default True, scale between 0 (worst) and 1 (best)
+
+    Parameters
+    ----------
+    adata
+        Annotated data matrix.
+    group_key
+        obs variable containing cell type information.
+    embed
+        obsm variable name.
+    metric
+        metric type.
+    scale
+        Scale between 0 (worst) and 1 (best).
+    Returns
+    -------
+    asw
+        Silhouette score.
     """
     if embed not in adata.obsm.keys():
         print(adata.obsm.keys())
@@ -46,29 +54,43 @@ def silhouette(
 
 
 def silhouette_batch(
-        adata,
-        batch_key,
-        group_key,
-        embed,
-        metric='euclidean',
-        return_all=False,
-        scale=True,
-        verbose=True
+        adata: AnnData,
+        batch_key: str,
+        group_key: str,
+        embed: str,
+        metric: str = 'euclidean',
+        return_all: bool = False,
+        scale: bool = True,
+        verbose: bool = False
 ):
     """
     Absolute silhouette score of batch labels subsetted for each group.
-    :param batch_key: batches to be compared against
-    :param group_key: group labels to be subsetted by e.g. cell type
-    :param embed: name of column in adata.obsm
-    :param metric: see sklearn silhouette score
-    :param scale: if True, scale between 0 and 1
-    :param return_all: if True, return all silhouette scores and label means
-        default False: return average width silhouette (ASW)
-    :param verbose:
-    :return:
-        average width silhouette ASW
-        mean silhouette per group in pd.DataFrame
-        Absolute silhouette scores per group label
+    Parameters
+    ----------
+    adata
+        Annotated data matrix.
+    batch_key
+        obs variable containing batch information.
+    group_key
+        obs variable containing cell type information.
+    embed
+        obsm variable name.
+    metric
+        metric type.
+    return_all
+        Return all outputs
+    scale
+        Scale between 0 (worst) and 1 (best).
+    verbose
+        Display scores per cell type.
+    Returns
+    -------
+    asw
+        Mean silhouette score.
+    sil_means
+        Mean silhouette per group.
+    sil_all
+        Absolute silhouette scores per group label.
     """
     if embed not in adata.obsm.keys():
         print(adata.obsm.keys())
