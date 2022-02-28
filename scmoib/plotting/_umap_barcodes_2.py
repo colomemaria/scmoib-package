@@ -20,9 +20,9 @@ from matplotlib import rcParams
 from matplotlib import patheffects
 from matplotlib.colors import Colormap
 from functools import partial
-import scanpy as sc
+import scanpy
 
-from sc.plotting._utils import (
+from scanpy.plotting._utils import (
     _IGraphLayout,
     _FontWeight,
     _FontSize,
