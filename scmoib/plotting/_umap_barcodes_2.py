@@ -22,7 +22,10 @@ from matplotlib.colors import Colormap, Normalize
 
 from functools import partial
 
+
+
 import scanpy
+from scanpy._settings import settings
 from scanpy._utils import sanitize_anndata, NeighborsView
 from scanpy.plotting._utils import (
     _IGraphLayout,
