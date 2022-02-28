@@ -2,6 +2,7 @@ import scanpy as sc
 #import anndata as ad 
 from anndata import AnnData
 from typing import Union, Optional, Sequence, Any, Mapping, Tuple, Callable, List, Iterable
+from .. import _utils
 
 def umap_barcodes(
         adata: AnnData,
@@ -33,5 +34,5 @@ def umap_barcodes(
     """
     bc_list = list(adata.obs.index)
     edge_list = list(zip([bc_list.index(i) for i in bc_list1], [bc_list.index(j) for j in bc_list2]))
-    sc.plotting._tools.scatterplots.embedding(adata, basis=basis, color=color, edges=edges, edges_width=edges_width, edge_list=edge_list)
+    sc.plotting._tools.scatterplots.embedding(adata, basis=basis, color=color, edges=edges, edges_width=edges_width, neighbors_key=edge_list)
 
