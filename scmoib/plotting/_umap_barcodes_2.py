@@ -34,7 +34,19 @@ from scanpy.plotting._utils import (
     check_projection,
     check_colornorm,
 )
-from scanpy.plotting._tools.scatterplots import _get_data_points, _get_color_source_vector
+from scanpy.plotting._tools.scatterplots import (
+	_get_data_points,
+	_get_color_source_vector,
+	_color_vector,
+	_basis2name,
+	_check_spot_size,
+	_check_scale_factor,
+	_check_spatial_data,
+	_check_img,
+	_check_crop_coord,
+	_check_na_color,
+)
+
 
 try:
     from typing import Literal
