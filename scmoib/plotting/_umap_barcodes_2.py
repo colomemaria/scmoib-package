@@ -24,6 +24,7 @@ from functools import partial
 import scanpy
 
 from scanpy.plotting._utils import (
+	sanitize_anndata,
     _IGraphLayout,
     _FontWeight,
     _FontSize,
