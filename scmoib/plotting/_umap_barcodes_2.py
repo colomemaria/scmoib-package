@@ -28,7 +28,6 @@ import scanpy
 from scanpy._settings import settings
 from scanpy._utils import sanitize_anndata, NeighborsView
 from scanpy.plotting._utils import (
-	_add_categorical_legend,
 	_get_basis,
     _IGraphLayout,
     _FontWeight,
@@ -40,6 +39,7 @@ from scanpy.plotting._utils import (
     check_colornorm,
 )
 from scanpy.plotting._tools.scatterplots import (
+	_add_categorical_legend,
 	_get_data_points,
 	_get_color_source_vector,
 	_color_vector,
