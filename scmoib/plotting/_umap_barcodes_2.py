@@ -39,6 +39,7 @@ from scanpy.plotting._utils import (
     check_colornorm,
 )
 from scanpy.plotting._tools.scatterplots import (
+	_get_palette,
 	_add_categorical_legend,
 	_get_data_points,
 	_get_color_source_vector,
