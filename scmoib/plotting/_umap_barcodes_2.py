@@ -1,6 +1,7 @@
 import scanpy as sc
 #import anndata as ad 
 from anndata import AnnData
+from typing import Union, Optional, Sequence, Any, Mapping, Tuple, Callable, List, Iterable
 
 def umap_barcodes(
         adata: AnnData,
