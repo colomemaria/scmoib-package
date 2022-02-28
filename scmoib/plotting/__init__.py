@@ -8,10 +8,14 @@ from ._metric_heatmap import metric_heatmap
 from ._node_distr import node_distr
 from ._river_plot import river_plot
 from ._river_plot_2_omics import river_plot_2_omics
-# add a if scanpy<1.8 :
-#from ._umap_barcodes import umap_barcodes
-# else: 
-from ._umap_barcodes_2 import umap_barcodes
+
 from ._pairwise_distance import pairwise_distance
 from ._silhouette import silhouette
 from ._metrics_scatterplot import metrics_scatterplot
+
+import scanpy
+if scanpy.__version__<1.8.0 :
+	from ._umap_barcodes import umap_barcodes
+else: 
+	from ._umap_barcodes_2 import umap_barcodes
+	
