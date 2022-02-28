@@ -14,8 +14,8 @@ from ._silhouette import silhouette
 from ._metrics_scatterplot import metrics_scatterplot
 
 import scanpy
-if scanpy.__version__<1.8.0 :
+#check if scanpy version is below 1.8.0 or higher
+if int(''.join(scanpy.__version__.split('.'))) <180 :
 	from ._umap_barcodes import umap_barcodes
 else: 
 	from ._umap_barcodes_2 import umap_barcodes
-	
