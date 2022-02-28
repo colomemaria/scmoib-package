@@ -28,6 +28,7 @@ import scanpy
 from scanpy._settings import settings
 from scanpy._utils import sanitize_anndata, NeighborsView
 from scanpy.plotting._utils import (
+	_add_categorical_legend,
 	_get_basis,
     _IGraphLayout,
     _FontWeight,
