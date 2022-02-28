@@ -18,7 +18,8 @@ from matplotlib import pyplot as pl, colors
 from matplotlib.cm import get_cmap
 from matplotlib import rcParams
 from matplotlib import patheffects
-from matplotlib.colors import Colormap
+from matplotlib.colors import Colormap, Normalize
+
 from functools import partial
 import scanpy
 
