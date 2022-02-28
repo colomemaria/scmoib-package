@@ -34,7 +34,7 @@ from scanpy.plotting._utils import (
     check_projection,
     check_colornorm,
 )
-from scanpy.plotting.scatterplots import _get_data_points
+from scanpy.plotting._tools.scatterplots import _get_data_points
 
 try:
     from typing import Literal
