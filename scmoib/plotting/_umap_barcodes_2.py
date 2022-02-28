@@ -21,10 +21,10 @@ from matplotlib import patheffects
 from matplotlib.colors import Colormap, Normalize
 
 from functools import partial
-import scanpy
 
+import scanpy
+from scanpy._utils import sanitize_anndata, NeighborsView
 from scanpy.plotting._utils import (
-	sanitize_anndata,
     _IGraphLayout,
     _FontWeight,
     _FontSize,
