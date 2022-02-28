@@ -27,6 +27,7 @@ from functools import partial
 import scanpy
 from scanpy._settings import settings
 from scanpy._utils import sanitize_anndata, NeighborsView
+from scanpy.plotting import _utils
 from scanpy.plotting._utils import (
 	_get_basis,
     _IGraphLayout,
