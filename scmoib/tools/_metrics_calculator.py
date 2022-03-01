@@ -126,7 +126,7 @@ class MetricsCalculator:
             adata: AnnData,
             adata_id: str,
             batch_key: str,
-            group_key: str,
+            cell_label: str,
             embed: object,
             metric: str = 'euclidean',
     ) -> None:
@@ -151,7 +151,7 @@ class MetricsCalculator:
         self.__check_key(adata_id)
         self.metrics[adata_id]['sil_clus'] = metrics.silhouette_batch(adata,
                                                                       batch_key,
-                                                                      group_key,
+                                                                      cell_label,
                                                                       embed,
                                                                       metric=metric)
 

@@ -85,7 +85,7 @@ def isolated_labels(
             verbose=verbose
         )
         scores[label] = score
-    scores = pd.Series(scores)
+    scores = pd.Series(scores, dtype='float64')
 
     if return_all:
         return scores
