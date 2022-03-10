@@ -61,7 +61,7 @@ def river_plot_2_omics(adata,
     del nodes
 
     ### add cell number
-    if cell_number == True:
+    if cell_number:
         df_nodes.index = df_nodes['ID']
 
         key_infos = pd.crosstab(adata_atac.obs[target], adata_atac.obs[source], margins=True)
@@ -131,7 +131,7 @@ def __tool_sankey(adata, source, target, cell_number=True):
     ###### NODES ######
     # transform key_infos into the nodes df
     nodes = [['ID', 'Label', 'Color']]
-    if cell_number == False:
+    if not cell_number:
         label_list = key_infos.columns.tolist() + key_infos.index.tolist()
     else:
         target_cell_nb = pd.crosstab(adata.obs[target], adata.obs[target], margins=True)

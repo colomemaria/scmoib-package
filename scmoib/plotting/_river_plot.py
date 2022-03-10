@@ -14,7 +14,7 @@ def river_plot(
         cell_number: bool = True,
         title: str = 'River plot (Sankey Diagram)',
         save: Union[str, None] = None,
-        scale: float = 1
+        scale: int = 1
 ) -> None:
     """
 
