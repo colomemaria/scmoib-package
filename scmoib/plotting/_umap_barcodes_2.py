@@ -1,51 +1,40 @@
-import logging
-import warnings
-import networkx as nx
-
 import collections.abc as cabc
+import warnings
 from copy import copy
-from typing import Union, Optional, Sequence, Any, Mapping, Tuple, Callable, List, Iterable
+from functools import partial
+from typing import Union, Optional, Sequence, Any, Mapping, Tuple, Callable, Iterable
+
+import networkx as nx
 import numpy as np
 import pandas as pd
 from anndata import AnnData
 from cycler import Cycler
-from matplotlib.axes import Axes
-from matplotlib.figure import Figure
-from matplotlib import pyplot as pl, colors
-from matplotlib.cm import get_cmap
-from matplotlib import rcParams
 from matplotlib import patheffects
+from matplotlib import pyplot as pl, colors
+from matplotlib import rcParams
+from matplotlib.axes import Axes
+from matplotlib.cm import get_cmap
 from matplotlib.colors import Colormap, Normalize
-
-from functools import partial
-
+from matplotlib.figure import Figure
 from scanpy._settings import settings
 from scanpy._utils import sanitize_anndata, NeighborsView
 from scanpy.plotting import _utils
-from scanpy.plotting._utils import (
-    _get_basis,
-    _IGraphLayout,
-    _FontWeight,
-    _FontSize,
-    ColorLike,
-    VBound,
-    circles,
-    check_projection,
-    check_colornorm,
-)
 from scanpy.plotting._tools.scatterplots import (
     _get_palette,
     _add_categorical_legend,
     _get_data_points,
     _get_color_source_vector,
     _color_vector,
+    _get_vboundnorm,
+    _panel_grid,
     _basis2name,
-    _check_spot_size,
-    _check_scale_factor,
-    _check_spatial_data,
-    _check_img,
-    _check_crop_coord,
-    _check_na_color,
+)
+from scanpy.plotting._utils import (
+    _get_basis,
+    VBound,
+    circles,
+    check_projection,
+    check_colornorm,
 )
 
 try:
@@ -378,7 +367,7 @@ def __embedding(
             try:
                 ax.set_title(title[count])
             except IndexError:
-                logg.warning(
+                warnings.warn(
                     "The title list is shorter than the number of panels. "
                     "Using 'color' value instead for some plots."
                 )
