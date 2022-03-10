@@ -1,7 +1,7 @@
-from scipy.special import ndtr
 from scipy.stats import gaussian_kde
 from anndata import AnnData
 import numpy as np
+
 
 def spec_dist(
         adata: AnnData, 

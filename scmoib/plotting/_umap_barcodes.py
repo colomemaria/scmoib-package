@@ -13,7 +13,7 @@ import networkx as nx
 
 import collections.abc as cabc
 from copy import copy
-from typing import Union, Optional, Sequence, Any, Mapping, Tuple, Callable, List, Iterable
+from typing import Union, Optional, Sequence, Any, Mapping, Tuple, Callable, Iterable
 import numpy as np
 import pandas as pd
 from anndata import AnnData

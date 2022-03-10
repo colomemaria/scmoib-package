@@ -1,7 +1,5 @@
 import logging
 import warnings
-import itertools
-from packaging.version import parse
 import networkx as nx
 
 import collections.abc as cabc
@@ -13,7 +11,6 @@ from anndata import AnnData
 from cycler import Cycler
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-import matplotlib
 from matplotlib import pyplot as pl, colors
 from matplotlib.cm import get_cmap
 from matplotlib import rcParams
@@ -22,14 +19,11 @@ from matplotlib.colors import Colormap, Normalize
 
 from functools import partial
 
-
-
-import scanpy
 from scanpy._settings import settings
 from scanpy._utils import sanitize_anndata, NeighborsView
 from scanpy.plotting import _utils
 from scanpy.plotting._utils import (
-	_get_basis,
+    _get_basis,
     _IGraphLayout,
     _FontWeight,
     _FontSize,
@@ -40,20 +34,19 @@ from scanpy.plotting._utils import (
     check_colornorm,
 )
 from scanpy.plotting._tools.scatterplots import (
-	_get_palette,
-	_add_categorical_legend,
-	_get_data_points,
-	_get_color_source_vector,
-	_color_vector,
-	_basis2name,
-	_check_spot_size,
-	_check_scale_factor,
-	_check_spatial_data,
-	_check_img,
-	_check_crop_coord,
-	_check_na_color,
+    _get_palette,
+    _add_categorical_legend,
+    _get_data_points,
+    _get_color_source_vector,
+    _color_vector,
+    _basis2name,
+    _check_spot_size,
+    _check_scale_factor,
+    _check_spatial_data,
+    _check_img,
+    _check_crop_coord,
+    _check_na_color,
 )
-
 
 try:
     from typing import Literal
@@ -114,6 +107,7 @@ def umap_barcodes(
     edge_list = list(zip([bc_list.index(i) for i in bc_list1], [bc_list.index(j) for j in bc_list2]))
     __embedding(adata, basis=basis, color=color, edges=edges, edges_width=edges_width, edge_list=edge_list)
 
+
 def __plot_edges(axs, adata, basis, edges_width, edges_color, edge_list=None, neighbors_key=None):
     if not isinstance(axs, cabc.Sequence):
         axs = [axs]
@@ -141,54 +135,53 @@ def __plot_edges(axs, adata, basis, edges_width, edges_color, edge_list=None, ne
             edge_collection.set_rasterized(settings._vector_friendly)
 
 
-
 def __embedding(
-    adata: AnnData,
-    basis: str,
-    *,
-    color: Union[str, Sequence[str], None] = None,
-    gene_symbols: Optional[str] = None,
-    use_raw: Optional[bool] = None,
-    sort_order: bool = True,
-    edges: bool = False,
-    edges_width: float = 0.1,
-    edges_color: Union[str, Sequence[float], Sequence[str]] = 'grey',
-    edge_list=None,
-    neighbors_key: Optional[str] = None,
-    arrows: bool = False,
-    arrows_kwds: Optional[Mapping[str, Any]] = None,
-    groups: Optional[str] = None,
-    components: Union[str, Sequence[str]] = None,
-    layer: Optional[str] = None,
-    projection: Literal['2d', '3d'] = '2d',
-    scale_factor: Optional[float] = None,
-    color_map: Union[Colormap, str, None] = None,
-    cmap: Union[Colormap, str, None] = None,
-    palette: Union[str, Sequence[str], Cycler, None] = None,
-    na_color: ColorLike = "lightgray",
-    na_in_legend: bool = True,
-    size: Union[float, Sequence[float], None] = None,
-    frameon: Optional[bool] = None,
-    legend_fontsize: Union[int, float, _FontSize, None] = None,
-    legend_fontweight: Union[int, _FontWeight] = 'bold',
-    legend_loc: str = 'right margin',
-    legend_fontoutline: Optional[int] = None,
-    vmax: Union[VBound, Sequence[VBound], None] = None,
-    vmin: Union[VBound, Sequence[VBound], None] = None,
-    vcenter: Union[VBound, Sequence[VBound], None] = None,
-    norm: Union[Normalize, Sequence[Normalize], None] = None,
-    add_outline: Optional[bool] = False,
-    outline_width: Tuple[float, float] = (0.3, 0.05),
-    outline_color: Tuple[str, str] = ('black', 'white'),
-    ncols: int = 4,
-    hspace: float = 0.25,
-    wspace: Optional[float] = None,
-    title: Union[str, Sequence[str], None] = None,
-    show: Optional[bool] = None,
-    save: Union[bool, str, None] = None,
-    ax: Optional[Axes] = None,
-    return_fig: Optional[bool] = None,
-    **kwargs,
+        adata: AnnData,
+        basis: str,
+        *,
+        color: Union[str, Sequence[str], None] = None,
+        gene_symbols: Optional[str] = None,
+        use_raw: Optional[bool] = None,
+        sort_order: bool = True,
+        edges: bool = False,
+        edges_width: float = 0.1,
+        edges_color: Union[str, Sequence[float], Sequence[str]] = 'grey',
+        edge_list=None,
+        neighbors_key: Optional[str] = None,
+        arrows: bool = False,
+        arrows_kwds: Optional[Mapping[str, Any]] = None,
+        groups: Optional[str] = None,
+        components: Union[str, Sequence[str]] = None,
+        layer: Optional[str] = None,
+        projection: Literal['2d', '3d'] = '2d',
+        scale_factor: Optional[float] = None,
+        color_map: Union[Colormap, str, None] = None,
+        cmap: Union[Colormap, str, None] = None,
+        palette: Union[str, Sequence[str], Cycler, None] = None,
+        na_color: ColorLike = "lightgray",
+        na_in_legend: bool = True,
+        size: Union[float, Sequence[float], None] = None,
+        frameon: Optional[bool] = None,
+        legend_fontsize: Union[int, float, _FontSize, None] = None,
+        legend_fontweight: Union[int, _FontWeight] = 'bold',
+        legend_loc: str = 'right margin',
+        legend_fontoutline: Optional[int] = None,
+        vmax: Union[VBound, Sequence[VBound], None] = None,
+        vmin: Union[VBound, Sequence[VBound], None] = None,
+        vcenter: Union[VBound, Sequence[VBound], None] = None,
+        norm: Union[Normalize, Sequence[Normalize], None] = None,
+        add_outline: Optional[bool] = False,
+        outline_width: Tuple[float, float] = (0.3, 0.05),
+        outline_color: Tuple[str, str] = ('black', 'white'),
+        ncols: int = 4,
+        hspace: float = 0.25,
+        wspace: Optional[float] = None,
+        title: Union[str, Sequence[str], None] = None,
+        show: Optional[bool] = None,
+        save: Union[bool, str, None] = None,
+        ax: Optional[Axes] = None,
+        return_fig: Optional[bool] = None,
+        **kwargs,
 ) -> Union[Figure, Axes, None]:
     """\
     Scatter plot for user specified embedding basis (e.g. umap, pca, etc)
@@ -273,9 +266,9 @@ def __embedding(
     # Eg. ['Gene1', 'louvain', 'Gene2'].
     # component_list is a list of components [[0,1], [1,2]]
     if (
-        not isinstance(color, str)
-        and isinstance(color, cabc.Sequence)
-        and len(color) > 1
+            not isinstance(color, str)
+            and isinstance(color, cabc.Sequence)
+            and len(color) > 1
     ) or len(components_list) > 1:
         if ax is not None:
             raise ValueError(
@@ -315,9 +308,9 @@ def __embedding(
         import pandas.core.series
 
         if (
-            size is not None
-            and isinstance(size, (cabc.Sequence, pandas.core.series.Series, np.ndarray))
-            and len(size) == adata.shape[0]
+                size is not None
+                and isinstance(size, (cabc.Sequence, pandas.core.series.Series, np.ndarray))
+                and len(size) == adata.shape[0]
         ):
             size = np.array(size, dtype=float)
     else:
@@ -336,7 +329,7 @@ def __embedding(
     #     color=gene2, components = [1, 2], color=gene2, components=[2,3],
     # ]
     for count, (value_to_plot, component_idx) in enumerate(
-        itertools.product(color, idx_components)
+            itertools.product(color, idx_components)
     ):
         color_source_vector = _get_color_source_vector(
             adata,

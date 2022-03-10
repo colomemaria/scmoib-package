@@ -1,10 +1,9 @@
-import pandas as pd
-from . import metrics
 from typing import Union, Iterable, Dict
+
+import pandas as pd
 from anndata import AnnData
-import scanpy as sc
-import numpy as np
-import episcanpy as epi
+
+from . import metrics
 
 
 class MetricsCalculator:
@@ -81,7 +80,7 @@ class MetricsCalculator:
             adata_id: str,
             n_metr: int = 10,
             norm: bool = True
-    ) -> float:
+    ):
         """
         Calculate our special distance based on the shortest path statistics.
         This metric is normalized by the ratio of connected barcodes.
@@ -127,7 +126,7 @@ class MetricsCalculator:
             adata_id: str,
             batch_key: str,
             cell_label: str,
-            embed: object,
+            embed: str,
             metric: str = 'euclidean',
     ) -> None:
         """
@@ -141,7 +140,7 @@ class MetricsCalculator:
                 Data ID for metrics dataframe.
             batch_key
                 obs variable containing batch information.
-            group_key
+            cell_label
                 obs variable containing cell type information.
             embed
                 obsm variable name
@@ -380,7 +379,6 @@ class MetricsCalculator:
     def _accuracy_paired_omics_per_cell_type(
             self,
             adata: AnnData,
-            adata_id: str,
             bc_list1: Iterable[str],
             bc_list2: Iterable[str],
             omic_layer: str,

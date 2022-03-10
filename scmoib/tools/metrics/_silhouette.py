@@ -123,7 +123,7 @@ def silhouette_batch(
                                  'group': [group] * len(sil_per_group),
                                  'silhouette_score': sil_per_group
                              })]
-                           )
+                            )
 
     sil_all = sil_all.reset_index(drop=True)
     sil_means = sil_all.groupby('group').mean()

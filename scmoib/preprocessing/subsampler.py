@@ -6,7 +6,7 @@ class Subsampler:
         self.df = adata.obs.copy()
         self.tmp_df = adata.obs.copy()
         self.history = []
-        self.seed = 0
+        self.seed = seed
 
     def clear(self):
         self.df = self.tmp_df.copy()
