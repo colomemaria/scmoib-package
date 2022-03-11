@@ -34,7 +34,7 @@ def average_distance_between_matching_barcodes(
         metric: str = 'cosine',
         cell_type: Union[str, None] = None,
         absolute: bool = True
-) -> Union[float, Dict[str, float]]:
+) -> Union[float, Dict]:
     """
     Computes the global average distance or the average distances for each cell type.
 
@@ -63,7 +63,7 @@ def average_distance_between_matching_barcodes(
 
     if not cell_type:
         average_metric = np.mean(adata.obs[f'{metric}_pairwise_distance_between_matching_barcodes'])
-        return average_metric
+        return float(average_metric)
     else:
         average_dist_per_cluster = {}
         for elem in list(set(adata.obs[cell_type])):

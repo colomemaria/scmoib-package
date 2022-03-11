@@ -1,8 +1,8 @@
-from pandas import DataFrame
 from typing import Tuple, Union
-from sklearn.preprocessing import MinMaxScaler
-import seaborn as sns
+
 import matplotlib.pyplot as plt
+import seaborn as sns
+from pandas import DataFrame
 
 
 def metrics_scatterplot(

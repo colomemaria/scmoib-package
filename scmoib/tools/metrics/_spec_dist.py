@@ -22,4 +22,3 @@ def spec_dist(
     except KeyError:
         print("Shortest path statistics is not available. \n",
               "Please, check if you ran the nodes_metrics method or used unintegrated data")
-        return

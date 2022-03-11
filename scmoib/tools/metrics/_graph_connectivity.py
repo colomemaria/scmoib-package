@@ -38,4 +38,4 @@ def graph_connectivity(adata: AnnData, label_key: str) -> float:
         tab = pd.value_counts(labs)
         clust_res.append(tab.max() / sum(tab))
 
-    return np.mean(clust_res)
+    return float(np.mean(clust_res))
