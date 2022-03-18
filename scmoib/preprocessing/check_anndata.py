@@ -1,5 +1,6 @@
 import episcanpy as epi
 from anndata import AnnData
+import scanpy as sc
 
 
 def check_anndata(adata: AnnData,
@@ -30,7 +31,7 @@ def check_anndata(adata: AnnData,
         epi.pp.lazy(adata)
 
     if mode == 'comps':
-        epi.pp.neighbors(adata, use_rep=use_rep)
+        sc.pp.neighbors(adata, use_rep=use_rep)
         epi.tl.umap(adata)
 
     if mode == 'graph':
