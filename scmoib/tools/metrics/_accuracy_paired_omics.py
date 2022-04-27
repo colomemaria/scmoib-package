@@ -43,9 +43,9 @@ def accuracy_paired_omics(
     df_atac = df[df[omic_layer] == omic_layer_variable[0]]
     df_rna = df[df[omic_layer] == omic_layer_variable[1]]
 
-    df_rna.reindex(index=bc_list1, copy=False)
-    df_atac.reindex(index=bc_list2, copy=False)
-
+    df_rna = df_rna.loc[bc_list1, :]
+    df_atac = df_atac.loc[bc_list2, :]
+    
     # get the accuracy
     accuracy = accuracy_score(df_rna[variable], df_atac[variable])
     if percent:

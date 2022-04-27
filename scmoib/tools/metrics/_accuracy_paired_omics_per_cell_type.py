@@ -45,8 +45,8 @@ def accuracy_paired_omics_per_cell_type(
     omic_layer_variable = list(set(df[omic_layer]))
     df_atac = df[df[omic_layer] == omic_layer_variable[0]]
     df_rna = df[df[omic_layer] == omic_layer_variable[1]]
-    df_rna.reindex(index=bc_list1, copy=False)
-    df_atac.reindex(index=bc_list2, copy=False)
+    df_rna = df_rna.loc[bc_list1, :]
+    df_atac = df_atac.loc[bc_list2, :]
     cell_type_dict = {}
     for current_cell_type in sorted(set(df[cell_type])):
         df_rna_cell_type = df_rna[df_rna[cell_type] == current_cell_type]
